@@ -86,7 +86,7 @@
         <dependency>
             <groupId>io.quarkiverse.minio</groupId>
             <artifactId>quarkus-minio</artifactId>
-            <version>2.10.3</version>
+            <version>3.0.2</version>
         </dependency>
 
         <!-- OTHERS-->
