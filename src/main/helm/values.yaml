@@ -1,7 +1,6 @@
 app:
   image:
-    repository: "1000kit/${project.artifactId}"
-    tag: ${project.version}
+    repository: "onexc-apps/onecx-document-management-bff"
+    tag: 999-SNAPSHOT
   db:
     enabled: true
-
