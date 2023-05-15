@@ -1,0 +1,7 @@
+app:
+  image:
+    repository: "1000kit/${project.artifactId}"
+    tag: ${project.version}
+  db:
+    enabled: true
+

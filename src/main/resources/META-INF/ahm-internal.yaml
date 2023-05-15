@@ -1,0 +1,635 @@
+---
+openapi: 3.0.3
+tags:
+  - name: AnnouncementInternal
+  - name: HelpItemInternal
+paths:
+  /announcement-help-management-rs/internal/announcements:
+    get:
+      tags:
+        - AnnouncementInternal
+      description: Retrieve announcements
+      operationId: getAnnouncements
+      parameters:
+        - name: appId
+          in: query
+          schema:
+            type: string
+        - name: endDateFrom
+          in: query
+          schema:
+            format: date-time
+            type: string
+        - name: endDateTo
+          in: query
+          schema:
+            format: date-time
+            type: string
+        - name: priority
+          in: query
+          schema:
+            type: array
+            items:
+              type: object
+        - name: startDateFrom
+          in: query
+          schema:
+            format: date-time
+            type: string
+        - name: startDateTo
+          in: query
+          schema:
+            format: date-time
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: array
+            items:
+              type: object
+        - name: type
+          in: query
+          schema:
+            type: array
+            items:
+              type: object
+      responses:
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AnnouncementListItemDTO'
+    post:
+      tags:
+        - AnnouncementInternal
+      description: Add announcement
+      operationId: addAnnouncement
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnnouncementCreateDTO'
+      responses:
+        "201":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnnouncementDetailItemDTO'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+        "403":
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                type: object
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+  /announcement-help-management-rs/internal/announcements/applications:
+    get:
+      tags:
+        - AnnouncementInternal
+      description: Get all apps with at least one announcement
+      operationId: getAllAppsWithAnnouncements
+      responses:
+        "403":
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                type: object
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApplicationDTO'
+  /announcement-help-management-rs/internal/announcements/{id}:
+    get:
+      tags:
+        - AnnouncementInternal
+      description: Retrieve announcement by id
+      operationId: getAnnouncementById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "403":
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                type: object
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnnouncementDetailItemDTO'
+    delete:
+      tags:
+        - AnnouncementInternal
+      description: Delete announcement
+      operationId: deleteAnnouncementById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No content
+        "403":
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                type: object
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+    patch:
+      tags:
+        - AnnouncementInternal
+      description: Patch/update announcement
+      operationId: updateAnnouncementById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnnouncementDetailItemDTO'
+      responses:
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+        "403":
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                type: object
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnnouncementDetailItemDTO'
+  /announcement-help-management-rs/internal/applications:
+    get:
+      tags:
+        - HelpItemInternal
+      description: Get all apps with at least one help item defined
+      operationId: getAllAppsWithHelpItems
+      responses:
+        "403":
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                type: object
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApplicationDTO'
+  /announcement-help-management-rs/internal/applications/helpItems:
+    get:
+      tags:
+        - HelpItemInternal
+      description: Get help items
+      operationId: getHelpItemsForAllApps
+      parameters:
+        - name: baseUrl
+          in: query
+          schema:
+            type: string
+        - name: context
+          in: query
+          schema:
+            type: string
+        - name: helpItemId
+          in: query
+          schema:
+            type: string
+        - name: resourceUrl
+          in: query
+          schema:
+            type: string
+      responses:
+        "403":
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                type: object
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HelpItemListDTO'
+  /announcement-help-management-rs/internal/applications/{appId}/helpItems:
+    get:
+      tags:
+        - HelpItemInternal
+      description: Get help items
+      operationId: getHelpItems
+      parameters:
+        - name: appId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: baseUrl
+          in: query
+          schema:
+            type: string
+        - name: context
+          in: query
+          schema:
+            type: string
+        - name: helpItemId
+          in: query
+          schema:
+            type: string
+        - name: resourceUrl
+          in: query
+          schema:
+            type: string
+      responses:
+        "403":
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                type: object
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HelpItemListDTO'
+    post:
+      tags:
+        - HelpItemInternal
+      description: Add a new help item
+      operationId: addHelpItem
+      parameters:
+        - name: appId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HelpItemPOSTDTO'
+      responses:
+        "201":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HelpItemDetailDTO'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+        "403":
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                type: object
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+    delete:
+      tags:
+        - HelpItemInternal
+      description: Delete all help items in app
+      operationId: deleteAllHelpItemForApp
+      parameters:
+        - name: appId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No content
+        "403":
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                type: object
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+  /announcement-help-management-rs/internal/applications/{appId}/helpItems/{id}:
+    get:
+      tags:
+        - HelpItemInternal
+      description: Retrieve help item detail info
+      operationId: getHelpItemById
+      parameters:
+        - name: appId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+        "404":
+          description: Not found
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HelpItemDetailDTO'
+    delete:
+      tags:
+        - HelpItemInternal
+      description: Deletes the help item
+      operationId: deleteHelpItemById
+      parameters:
+        - name: appId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No content
+        "403":
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                type: object
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+    patch:
+      tags:
+        - HelpItemInternal
+      description: Update/patch an existing help item
+      operationId: updateHelpItemById
+      parameters:
+        - name: appId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HelpItemDetailDTO'
+      responses:
+        "403":
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                type: object
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HelpItemDetailDTO'
+components:
+  schemas:
+    AnnouncementCreateDTO:
+      type: object
+      properties:
+        appId:
+          type: string
+        content:
+          type: string
+        endDate:
+          format: date-time
+          type: string
+        priority:
+          type: object
+        startDate:
+          format: date-time
+          type: string
+        status:
+          type: object
+        title:
+          type: string
+        type:
+          type: object
+    AnnouncementDetailItemDTO:
+      type: object
+      properties:
+        appId:
+          type: string
+        content:
+          type: string
+        endDate:
+          format: date-time
+          type: string
+        priority:
+          type: object
+        startDate:
+          format: date-time
+          type: string
+        status:
+          type: object
+        title:
+          type: string
+        type:
+          type: object
+    ApplicationDTO:
+      type: object
+      properties:
+        description:
+          type: string
+        id:
+          type: string
+    AnnouncementListItemDTO:
+      type: object
+      properties:
+        appId:
+          type: string
+        endDate:
+          format: date-time
+          type: string
+        id:
+          type: string
+        priority:
+          type: object
+        startDate:
+          format: date-time
+          type: string
+        status:
+          type: object
+        title:
+          type: string
+        type:
+          type: object
+    HelpItemPOSTDTO:
+      type: object
+      properties:
+        baseUrl:
+          type: string
+        context:
+          type: string
+        helpItemId:
+          type: string
+        resourceUrl:
+          type: string
+    HelpItemDetailDTO:
+      type: object
+      properties:
+        appId:
+          type: string
+        baseUrl:
+          type: string
+        context:
+          type: string
+        helpItemId:
+          type: string
+        resourceUrl:
+          type: string
+    HelpItemListDTO:
+      type: object
+      properties:
+        appId:
+          type: string
+        baseUrl:
+          type: string
+        context:
+          type: string
+        helpItemId:
+          type: string
+        id:
+          type: string
+        resourceUrl:
+          type: string

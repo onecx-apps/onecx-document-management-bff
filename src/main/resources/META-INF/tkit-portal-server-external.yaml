@@ -1,0 +1,948 @@
+---
+openapi: 3.0.3
+tags:
+  - name: avatarV1
+  - name: feedbackV1
+  - name: portalItemsV1
+  - name: portalLegacy
+  - name: portalV1
+  - name: supportTicketV1
+  - name: userInfoV1
+  - name: userProfileV1
+paths:
+  /legacy/menustructure/{portalId}:
+    get:
+      tags:
+        - portalLegacy
+      description: Fetch the menuItems of the portal in the tree structure
+      operationId: getMenuStructureForPortalId
+      parameters:
+        - name: portalId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "401":
+          description: Not authorized
+        "404":
+          description: Not found
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MenuItemStructureDtoLegacy'
+  /legacy/menustructure/{portalId}/{applicationId}:
+    get:
+      tags:
+        - portalLegacy
+      description: Fetch the menuItems of the portal and application pair in the tree
+        structure
+      operationId: getMenuStructureForPortalIdAndApplicationId
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: portalId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "401":
+          description: Not authorized
+        "404":
+          description: Not found
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MenuItemStructureDtoLegacy'
+  /v1/feedback/send:
+    post:
+      tags:
+        - feedbackV1
+      description: Send feedback for an app
+      operationId: sendFeedbackV1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeedbackDTOV1'
+      responses:
+        "403":
+          description: Not authorized
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+        "200":
+          description: OK
+  /v1/portalItems/search:
+    get:
+      tags:
+        - portalItemsV1
+      description: Returns a list of portal items matching query
+      operationId: getPortalItemsByQuery
+      parameters:
+        - name: count
+          in: query
+          schema:
+            format: int32
+            type: integer
+        - name: portal-id
+          in: query
+          schema:
+            type: string
+        - name: query
+          in: query
+          schema:
+            type: string
+      responses:
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SearchItemDTOv1'
+  /v1/portals/{portalId}:
+    get:
+      tags:
+        - portalV1
+      description: Load a single portal
+      operationId: getPortalV1
+      parameters:
+        - name: portalId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "403":
+          description: Not authorized
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+  /v1/searchTemplates:
+    post:
+      tags:
+        - portalV1
+      summary: Creates the search template.
+      description: Creates the search template.
+      operationId: createSearchTemplate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchTemplateDTOv1'
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchTemplateDTOv1'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+  /v1/searchTemplates/default/{application}/{page}/{user}:
+    get:
+      tags:
+        - portalV1
+      summary: "Gets the default template for application, page and user."
+      description: "The default template for the application, page and user is returned."
+      operationId: getDefaultSearchTemplate
+      parameters:
+        - name: application
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: user
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchTemplateDTOv1'
+  /v1/searchTemplates/search/criteria:
+    post:
+      tags:
+        - portalV1
+      summary: Finds search templates by criteria.
+      description: The search templates are found by search criteria.
+      operationId: findBySearchCriteria
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SearchTemplateDTOv1'
+  /v1/searchTemplates/{templateId}:
+    get:
+      tags:
+        - portalV1
+      summary: Finds search templates by it's id.
+      description: Gets the search template by it's id.
+      operationId: getSearchTemplateById
+      parameters:
+        - name: templateId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchTemplateDTOv1'
+    put:
+      tags:
+        - portalV1
+      summary: Updates the search template.
+      description: Updates the search template.
+      operationId: updateSearchTemplate
+      parameters:
+        - name: templateId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchTemplateDTOv1'
+      responses:
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchTemplateDTOv1'
+    delete:
+      tags:
+        - portalV1
+      summary: Deletes the search template.
+      description: Deletes the search template.
+      operationId: deleteSearchTemplate
+      parameters:
+        - name: templateId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No content
+          content:
+            application/json: {}
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+  /v1/supportTicket/send:
+    post:
+      tags:
+        - supportTicketV1
+      description: Send support Ticket for an app
+      operationId: sendSupportTicketV1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SupportTicketDTOV1'
+      responses:
+        "403":
+          description: Not authorized
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+        "200":
+          description: OK
+  /v1/userInfo:
+    get:
+      tags:
+        - userInfoV1
+      description: Search for users
+      operationId: searchUsers
+      parameters:
+        - name: q
+          in: query
+          schema:
+            type: string
+      responses:
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+        "400":
+          description: Bad request
+          content:
+            text/plain: {}
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserInfoDTOv1'
+  /v1/userInfo/avatarIds:
+    get:
+      tags:
+        - userInfoV1
+      description: Search for avatar ids for selected users
+      operationId: searchAvatarIds
+      parameters:
+        - name: userId
+          in: query
+          schema:
+            uniqueItems: true
+            type: array
+            items:
+              type: string
+      responses:
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+        "400":
+          description: Bad request
+          content:
+            text/plain: {}
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserInfoDTOv1'
+  /v1/userProfile/me:
+    get:
+      tags:
+        - userProfileV1
+      description: Load user profile by user Id
+      operationId: getUserProfile
+      responses:
+        "400":
+          description: Bad request
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfileDTOv1'
+  /v1/userProfile/me/avatar:
+    get:
+      tags:
+        - avatarV1
+      description: Get user avatar info
+      operationId: getUserAvatarInfo
+      responses:
+        "401":
+          description: Unauthorized
+        "403":
+          description: Not Authorized
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvatarInfoDTOv1'
+    put:
+      tags:
+        - avatarV1
+      description: Upload user avatar
+      operationId: uploadAvatar
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+      responses:
+        "401":
+          description: Unauthorized
+        "403":
+          description: Not Authorized
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvatarInfoDTOv1'
+    delete:
+      tags:
+        - avatarV1
+      description: Delete user's avatar
+      operationId: deleteUserAvatar
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+        "403":
+          description: Not Authorized
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+  /v1/userProfile/me/avatar/{avatarId}:
+    get:
+      tags:
+        - avatarV1
+      parameters:
+        - name: avatarId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvatarInfoDTOv1'
+  /v1/userProfile/me/change-password:
+    put:
+      tags:
+        - userProfileV1
+      summary: Reset Keycloak User's password
+      description: The password of user registered in keycloak is set to the new one.
+      operationId: resetKeycloakUserPassword
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetPasswordDTOv1'
+      responses:
+        "204":
+          description: No content
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+  /v1/userProfile/me/settings:
+    get:
+      tags:
+        - userProfileV1
+      description: Get user's settings
+      operationId: getUserSettings
+      responses:
+        "400":
+          description: Bad request
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountSettingsDTOv1'
+    patch:
+      tags:
+        - userProfileV1
+      description: Update user's settings
+      operationId: updateUserSettings
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountSettingsDTOv1'
+      responses:
+        "401":
+          description: Unauthorized
+        "403":
+          description: Not Authorized
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountSettingsDTOv1'
+  /v1/userProfile/me/userPerson:
+    get:
+      tags:
+        - userProfileV1
+      description: Load user profile by user Id
+      operationId: getUserPerson
+      responses:
+        "401":
+          description: Unauthorized
+        "403":
+          description: Not Authorized
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPersonDTOv1'
+    put:
+      tags:
+        - userProfileV1
+      description: Updates user person data
+      operationId: updateUserPerson
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserPersonDTOv1'
+      responses:
+        "401":
+          description: Unauthorized
+        "403":
+          description: Not Authorized
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+        "200":
+          description: OK
+          content:
+            text/plain:
+              schema:
+                description: URL of updated resource
+                type: string
+components:
+  schemas:
+    MenuItemStructureDtoLegacy:
+      type: object
+      properties:
+        applicationId:
+          type: string
+        badge:
+          type: string
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/MenuItemStructureDtoLegacy'
+        description:
+          type: string
+        disabled:
+          type: boolean
+        i18n:
+          type: object
+          additionalProperties:
+            type: string
+        key:
+          type: string
+        name:
+          type: string
+        parentItemId:
+          type: string
+        parentKey:
+          type: string
+        portalExit:
+          type: boolean
+        portalId:
+          type: string
+        position:
+          format: int32
+          type: integer
+        scope:
+          type: object
+        url:
+          type: string
+    AvatarInfoDTOv1:
+      type: object
+      properties:
+        avatarImageUrl:
+          description: ""
+          type: string
+          example: http://tkit-portal/data/afcc5d0d-6509-497a-8125-614f82b106ae
+        avatarSmallImageUrl:
+          description: ""
+          type: string
+          example: http://tkit-portal/data/afcc5d0d-6509-497a-8125-614f82asb106ae
+        lastUpdateTime:
+          format: date-time
+          description: dateTime of last update
+          type: string
+        userUploaded:
+          description: flag whether avatar was uploaded by user
+          type: boolean
+    FeedbackDTOV1:
+      type: object
+      properties:
+        appId:
+          type: string
+        comment:
+          type: string
+        rating:
+          format: int32
+          type: integer
+        userId:
+          type: string
+    SearchItemType:
+      enum:
+        - APPLICATION
+      type: string
+    SearchItemDTOv1:
+      type: object
+      properties:
+        applicationId:
+          type: string
+        badge:
+          type: string
+        description:
+          type: string
+        disabled:
+          type: boolean
+        name:
+          type: string
+        portalId:
+          type: string
+        type:
+          $ref: '#/components/schemas/SearchItemType'
+        url:
+          type: string
+    SearchTemplateDTOv1:
+      type: object
+      properties:
+        apiVersion:
+          type: string
+        application:
+          type: string
+        criteriaAsJson:
+          type: string
+        defaultTemplate:
+          type: boolean
+        global:
+          type: boolean
+        name:
+          type: string
+        page:
+          type: string
+        user:
+          type: string
+    SupportTicketDTOV1:
+      type: object
+      properties:
+        processId:
+          type: string
+        processStep:
+          type: string
+        source:
+          type: string
+        sourceDeepLink:
+          type: string
+    UserInfoDTOv1:
+      type: object
+      properties:
+        familyName:
+          type: string
+        fullName:
+          type: string
+        givenName:
+          type: string
+        userId:
+          type: string
+    UserPersonAddressDTOv1:
+      type: object
+      properties:
+        city:
+          type: string
+        country:
+          type: string
+        postalCode:
+          type: string
+        street:
+          type: string
+        streetNo:
+          type: string
+    UserPersonPhoneDTOv1:
+      type: object
+      properties:
+        number:
+          type: string
+        type:
+          type: string
+    UserPersonDTOv1:
+      type: object
+      properties:
+        address:
+          $ref: '#/components/schemas/UserPersonAddressDTOv1'
+        displayName:
+          type: string
+        email:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        phone:
+          $ref: '#/components/schemas/UserPersonPhoneDTOv1'
+    AccountSettingsDTOv1:
+      type: object
+      properties:
+        layoutAndThemeSettings:
+          allOf:
+            - $ref: '#/components/schemas/LayoutAndThemeDTOv1'
+            - description: layout and themes settings of user profile
+        localeAndTimeSettings:
+          allOf:
+            - $ref: '#/components/schemas/LocaleAndTimeSettingsDTOv1'
+            - description: locale and time settings of user profile
+        notificationSettings:
+          allOf:
+            - $ref: '#/components/schemas/NotificationSettingsDTOv1'
+            - description: notification settings of user profile
+        preferences:
+          type: array
+          items:
+            $ref: '#/components/schemas/PreferencesDTOv1'
+        privacySettings:
+          allOf:
+            - $ref: '#/components/schemas/PrivacySettingsDTOv1'
+            - description: privacy settings of user profile
+    LayoutAndThemeDTOv1:
+      type: object
+      properties:
+        compactView:
+          description: defines whether compact view is enabled
+          type: boolean
+        menuTheme:
+          description: defines a color theme of the menu sidebar
+          type: object
+        sidebarViewMode:
+          description: defines a mode of the sidebar
+          type: object
+    LocaleAndTimeSettingsDTOv1:
+      type: object
+      properties:
+        locale:
+          description: ""
+          type: string
+          example: de-DE
+        timezone:
+          description: ""
+          type: string
+          example: Europe/Bratislava
+    NotificationSettingsDTOv1:
+      type: object
+    PreferencesDTOv1:
+      type: object
+      properties:
+        key:
+          description: name of preference
+          type: string
+        value:
+          description: value of preference
+          type: string
+    PrivacySettingsDTOv1:
+      type: object
+      properties:
+        hideMyProfile:
+          description: Flag whether profile should be hidden or not
+          type: boolean
+    UserProfileDTOv1:
+      type: object
+      properties:
+        accountSettings:
+          allOf:
+            - $ref: '#/components/schemas/AccountSettingsDTOv1'
+            - description: user account settings
+        avatar:
+          allOf:
+            - $ref: '#/components/schemas/AvatarInfoDTOv1'
+            - description: Avatar related data
+        identityProvider:
+          type: string
+          example: Keycloak
+        identityProviderId:
+          description: "user id in external identity provider, e.g. in keycloak"
+          type: string
+        memberships:
+          type: array
+          items: {}
+        organization:
+          description: ""
+          type: string
+          example: Acme org IT dept
+        person:
+          $ref: '#/components/schemas/UserPersonDTOv1'
+        roles:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        userId:
+          description: ""
+          type: string
+          example: joe@acme.com
+    ResetPasswordDTOv1:
+      type: object
+      properties:
+        password:
+          type: string

@@ -1,0 +1,18 @@
+apiVersion: v2
+name: ${project.artifactId}
+version: ${project.version}
+appVersion: ${project.version}
+description: Document management bff
+keywords:
+  - document management bff
+sources:
+  - https://gitlab.com/1000kit/apps/document-management/tkit-document-management-bff
+maintainers:
+  - name: Tkit Developer
+    email: tkit_dev@1000kit.org
+dependencies:
+  # https://gitlab.com/1000kit/infra/helm/quarkus.git
+  - name: quarkus
+    version: ^2
+    repository: alias:1000kit
+    alias: app
