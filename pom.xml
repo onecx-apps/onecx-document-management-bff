@@ -14,7 +14,7 @@
     <groupId>io.github.onecx-apps</groupId>
     <artifactId>onecx-document-management-bff</artifactId>
     <version>999-SNAPSHOT</version>
-    <name>onecx-document-management</name>
+    <name>onecx-document-management-bff</name>
 
     <dependencies>
         <!-- 1000kit -->
