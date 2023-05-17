@@ -11,6 +11,7 @@
         <version>0.16.0</version>
     </parent>
 
+         
     <groupId>io.github.onecx-apps</groupId>
     <artifactId>onecx-document-management-bff</artifactId>
     <version>999-SNAPSHOT</version>
