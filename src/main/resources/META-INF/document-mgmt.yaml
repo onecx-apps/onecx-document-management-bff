@@ -556,17 +556,17 @@ paths:
             application/octet-stream:
               schema:
                 $ref: '#/components/schemas/InputStream'
+  /v1/document/file/delete-bulk-attachment:
     delete:
       tags:
-      - DocumentControllerV1
-      description: Delete attachment's file
-      operationId: deleteFile
-      parameters:
-      - name: attachmentId
-        in: path
-        required: true
-        schema:
-          type: string
+        - DocumentControllerV1
+      description: Delete attachment's files in bulk
+      operationId: deleteFilesInBulk
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
       responses:
         "204":
           description: No Content
