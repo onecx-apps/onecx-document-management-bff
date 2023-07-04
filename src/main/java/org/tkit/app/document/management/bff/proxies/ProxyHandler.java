@@ -1,5 +1,6 @@
-package org.tkit.app.document.management.bff.ManualProxies;
+package org.tkit.app.document.management.bff.proxies;
 
+import io.quarkus.logging.Log;
 import io.vertx.core.Handler;
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpServerRequest;
@@ -25,8 +26,8 @@ public class ProxyHandler implements Handler<RoutingContext> {
     @Override
     public void handle(RoutingContext routingContext) {
         HttpServerRequest serverRequest = routingContext.request();
-        log.info("Proxying request {} {} to {}", serverRequest.method().name(), serverRequest.uri(),
-                this.baseUrl + serverRequest.uri());
+        Log.info("Proxying request " + serverRequest.method().name() + " " + serverRequest.uri() + " to " + this.baseUrl
+                + serverRequest.uri());
         HttpServerResponse serverResponse = serverRequest.response();
         httpClient.request(new RequestOptions()
                 .setAbsoluteURI(this.baseUrl + serverRequest.uri())
@@ -34,17 +35,17 @@ public class ProxyHandler implements Handler<RoutingContext> {
                 .onSuccess(clientRequest -> {
                     clientRequest.headers().setAll(serverRequest.headers().remove("Host"));
                     clientRequest.send(serverRequest).onSuccess(clientResponse -> {
-                        log.info("Proxying {} response from {} to the client.", clientResponse.statusCode(),
-                                clientRequest.absoluteURI());
+                        Log.info("Proxying " + clientResponse.statusCode() + " response from " + clientRequest.absoluteURI()
+                                + " to the client.");
                         serverResponse.setStatusCode(clientResponse.statusCode());
                         serverResponse.headers().setAll(clientResponse.headers());
                         serverResponse.send(clientResponse);
                     }).onFailure(err -> {
-                        log.error("Backend failure", err);
+                        Log.error("Backend failure", err);
                         serverResponse.setStatusCode(500).end();
                     });
                 }).onFailure(err -> {
-                    log.error("Could not connect to server {}", baseUrl, err);
+                    Log.error("Could not connect to server {}", baseUrl, err);
                     serverResponse.setStatusCode(500).end();
                 });
     }
