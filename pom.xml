@@ -260,7 +260,7 @@
                             </configOptions>
                         </configuration>
                     </execution>
-                    <execution>
+                    <!-- <execution>
                         <?m2e execute onConfiguration,onIncremental?>
                         <id>launchpad-client</id>
                         <goals>
@@ -323,7 +323,7 @@
                                 <sourceFolder>launchpad</sourceFolder>
                             </configOptions>
                         </configuration>
-                    </execution>
+                    </execution> -->
                     <execution>
                         <?m2e execute onConfiguration,onIncremental?>
                         <id>ahm-client</id>
