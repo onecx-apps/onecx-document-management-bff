@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-         xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -11,7 +11,7 @@
         <version>0.16.0</version>
     </parent>
 
-         
+
     <groupId>io.github.onecx-apps</groupId>
     <artifactId>onecx-document-management-bff</artifactId>
     <version>999-SNAPSHOT</version>
@@ -29,16 +29,12 @@
         </dependency>
         <dependency>
             <groupId>org.tkit.quarkus.lib</groupId>
-            <artifactId>tkit-quarkus-log-json</artifactId>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.tkit.quarkus.lib</groupId>
-            <artifactId>tkit-quarkus-jpa</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.tkit.quarkus.lib</groupId>
             <artifactId>tkit-quarkus-rest</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.tkit.quarkus</groupId>
+            <artifactId>tkit-quarkus-bff-lib</artifactId>
+            <version>1.0.0</version>
         </dependency>
 
         <!-- QUARKUS -->
@@ -52,23 +48,15 @@
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-arc</artifactId>
+            <artifactId>quarkus-rest-client</artifactId>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-smallrye-openapi</artifactId>
+            <artifactId>quarkus-container-image-docker</artifactId>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-liquibase</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-jdbc-postgresql</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-hibernate-validator</artifactId>
+            <artifactId>quarkus-smallrye-health</artifactId>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
@@ -76,42 +64,334 @@
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-resteasy-multipart</artifactId>
+            <artifactId>quarkus-smallrye-jwt-build</artifactId>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-oidc</artifactId>
-        </dependency>
-
-        <!-- QUARKIVERSE-->
-        <dependency>
-            <groupId>io.quarkiverse.minio</groupId>
-            <artifactId>quarkus-minio</artifactId>
-            <version>2.10.3</version>
+            <artifactId>quarkus-resteasy-multipart</artifactId>
         </dependency>
 
         <!-- OTHERS-->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct</artifactId>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
         </dependency>
+        <!-- <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>6.0.9</version>
+        </dependency> -->
 
         <!-- TEST -->
         <dependency>
-            <groupId>org.tkit.quarkus.lib</groupId>
-            <artifactId>tkit-quarkus-test-db-import</artifactId>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-test-keycloak-server</artifactId>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>3.23.1</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>io.quarkus</groupId>
+                <artifactId>quarkus-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>io.quarkus</groupId>
+                <artifactId>quarkus-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.tkit.maven</groupId>
+                <artifactId>tkit-mp-restclient-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <?m2e execute onConfiguration,onIncremental?>
+                        <id>document-client</id>
+                        <goals>
+                            <goal>codegen</goal>
+                        </goals>
+                        <configuration>
+                            <apiName>DocumentMgmtRestClient</apiName>
+                            <inputSpec>src/main/resources/META-INF/document-mgmt.yaml</inputSpec>
+                            <output>${project.build.directory}/generated-sources/proxy</output>
+                            <apiPackage>gen.org.document.mgmt.bff.proxy</apiPackage>
+                            <beanParamCount>25</beanParamCount>
+                            <modelPackage>gen.org.document.mgmt.bff.proxy.models</modelPackage>
+                            <generateSupportingFiles>false</generateSupportingFiles>
+                            <apiInterfaceDoc>false</apiInterfaceDoc>
+                            <fieldGen>LOMBOK</fieldGen>
+                            <jsonLib>JACKSON</jsonLib>
+                            <annotations>
+                                <annotation>javax.inject.Singleton</annotation>
+                                <annotation>org.eclipse.microprofile.rest.client.inject.RegisterRestClient(configKey="documentmgmt")</annotation>
+                                <annotation>org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders</annotation>
+                            </annotations>
+                            <modelAnnotations>
+                                <modelAnnotation>lombok.ToString</modelAnnotation>
+                                <modelAnnotation>io.quarkus.runtime.annotations.RegisterForReflection</modelAnnotation>
+                            </modelAnnotations>
+                            <configOptions>
+                                <sourceFolder>document</sourceFolder>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <?m2e execute onConfiguration,onIncremental?>
+                        <id>document-proxy</id>
+                        <goals>
+                            <goal>codegen</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>src/main/resources/META-INF/document-mgmt.yaml</inputSpec>
+                            <output>${project.build.directory}/generated-sources/proxy</output>
+                            <apiPackage>gen.org.document.mgmt.bff.proxy</apiPackage>
+                            <beanParamCount>25</beanParamCount>
+                            <apiName>DocumentProxy</apiName>
+                            <modelPackage>gen.org.document.mgmt.bff.proxy.models</modelPackage>
+                            <generateSupportingFiles>false</generateSupportingFiles>
+                            <apiInterfaceDoc>false</apiInterfaceDoc>
+                            <interfaceOnly>false</interfaceOnly>
+                            <implType>PROXY</implType>
+                            <fieldGen>LOMBOK</fieldGen>
+                            <jsonLib>JACKSON</jsonLib>
+                            <apiSuffix>RestController</apiSuffix>
+                            <proxyClientClass>DocumentMgmtRestClient</proxyClientClass>
+                            <annotations>
+                                <annotation>javax.enterprise.context.ApplicationScoped</annotation>
+                            </annotations>
+                            <modelAnnotations>
+                                <modelAnnotation>lombok.ToString</modelAnnotation>
+                                <modelAnnotation>io.quarkus.runtime.annotations.RegisterForReflection</modelAnnotation>
+                            </modelAnnotations>
+                            <configOptions>
+                                <sourceFolder>document</sourceFolder>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <?m2e execute onConfiguration,onIncremental?>
+                        <id>portal-client</id>
+                        <goals>
+                            <goal>codegen</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>src/main/resources/META-INF/tkit-portal-server-external.yaml</inputSpec>
+                            <output>${project.build.directory}/generated-sources/proxy</output>
+                            <apiPackage>org.tkit.portal.rs.proxy</apiPackage>
+                            <modelPackage>org.tkit.portal.rs.proxy.models</modelPackage>
+                            <apiName>PortalServerRestClient</apiName>
+                            <generateSupportingFiles>false</generateSupportingFiles>
+                            <apiInterfaceDoc>false</apiInterfaceDoc>
+                            <fieldGen>LOMBOK</fieldGen>
+                            <jsonLib>JACKSON</jsonLib>
+                            <annotations>
+                                <annotation>javax.inject.Singleton</annotation>
+                                <annotation>org.tkit.quarkus.log.cdi.LogService</annotation>
+                                <annotation> org.eclipse.microprofile.rest.client.inject.RegisterRestClient(configKey="tkitPortalServer")
+                                </annotation>
+                                <annotation>javax.enterprise.context.ApplicationScoped</annotation>
+                                <annotation>org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders</annotation>
+                            </annotations>
+                            <modelAnnotations>
+                                <modelAnnotation>lombok.ToString</modelAnnotation>
+                                <modelAnnotation>com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown=true)</modelAnnotation>
+                                <modelAnnotation>io.quarkus.runtime.annotations.RegisterForReflection</modelAnnotation>
+                            </modelAnnotations>
+                            <configOptions>
+                                <sourceFolder>portal</sourceFolder>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <?m2e execute onConfiguration,onIncremental?>
+                        <id>portal-proxy</id>
+                        <goals>
+                            <goal>codegen</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>src/main/resources/META-INF/tkit-portal-server-external.yaml</inputSpec>
+                            <output>${project.build.directory}/generated-sources/proxy</output>
+                            <apiPackage>org.tkit.portal.rs.proxy</apiPackage>
+                            <modelPackage>org.tkit.portal.rs.proxy.models</modelPackage>
+                            <apiName>PortalServerRestController</apiName>
+                            <generateSupportingFiles>false</generateSupportingFiles>
+                            <apiInterfaceDoc>false</apiInterfaceDoc>
+                            <interfaceOnly>false</interfaceOnly>
+                            <implType>PROXY</implType>
+                            <fieldGen>LOMBOK</fieldGen>
+                            <jsonLib>JACKSON</jsonLib>
+                            <apiSuffix>RestController</apiSuffix>
+                            <proxyClientClass>PortalServerRestClient</proxyClientClass>
+                            <annotations>
+                                <annotation>javax.enterprise.context.ApplicationScoped</annotation>
+                            </annotations>
+                            <modelAnnotations>
+                                <modelAnnotation>lombok.ToString</modelAnnotation>
+                                <modelAnnotation>com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown=true)</modelAnnotation>
+                                <modelAnnotation>io.quarkus.runtime.annotations.RegisterForReflection</modelAnnotation>
+                            </modelAnnotations>
+                            <configOptions>
+                                <sourceFolder>portal</sourceFolder>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                    <!-- <execution>
+                        <?m2e execute onConfiguration,onIncremental?>
+                        <id>launchpad-client</id>
+                        <goals>
+                            <goal>codegen</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>src/main/resources/META-INF/portal-launchpad.yaml</inputSpec>
+                            <output>${project.build.directory}/generated-sources/proxy</output>
+                            <apiPackage>org.tkit.launchpad.rs.proxy</apiPackage>
+                            <modelPackage>org.tkit.launchpad.rs.proxy.models</modelPackage>
+                            <apiName>LaunchpadRestClient</apiName>
+                            <generateSupportingFiles>true</generateSupportingFiles>
+                            <apiInterfaceDoc>false</apiInterfaceDoc>
+                            <fieldGen>LOMBOK</fieldGen>
+                            <jsonLib>JACKSON</jsonLib>
+                            <annotations>
+                                <annotation>javax.inject.Singleton</annotation>
+                                <annotation>org.tkit.quarkus.log.cdi.LogService</annotation>
+                                <annotation>org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders</annotation>
+                                <annotation> org.eclipse.microprofile.rest.client.inject.RegisterRestClient(configKey="portalLaunchpad")
+                                </annotation>
+                            </annotations>
+                            <modelAnnotations>
+                                <modelAnnotation>lombok.ToString</modelAnnotation>
+                                <modelAnnotation>io.quarkus.runtime.annotations.RegisterForReflection</modelAnnotation>
+                            </modelAnnotations>
+                            <configOptions>
+                                <sourceFolder>launchpad</sourceFolder>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <?m2e execute onConfiguration,onIncremental?>
+                        <id>launchpad-proxy</id>
+                        <goals>
+                            <goal>codegen</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>src/main/resources/META-INF/portal-launchpad.yaml</inputSpec>
+                            <output>${project.build.directory}/generated-sources/proxy</output>
+                            <apiPackage>org.tkit.launchpad.rs.proxy</apiPackage>
+                            <modelPackage>org.tkit.launchpad.rs.proxy.models</modelPackage>
+                            <apiName>LaunchpadRestController</apiName>
+                            <generateSupportingFiles>false</generateSupportingFiles>
+                            <apiInterfaceDoc>false</apiInterfaceDoc>
+                            <interfaceOnly>false</interfaceOnly>
+                            <implType>PROXY</implType>
+                            <fieldGen>LOMBOK</fieldGen>
+                            <jsonLib>JACKSON</jsonLib>
+                            <apiSuffix>RestController</apiSuffix>
+                            <proxyClientClass>LaunchpadRestClient</proxyClientClass>
+                            <annotations>
+                                <annotation>javax.enterprise.context.ApplicationScoped</annotation>
+                            </annotations>
+                            <modelAnnotations>
+                                <modelAnnotation>lombok.ToString</modelAnnotation>
+                                <modelAnnotation>io.quarkus.runtime.annotations.RegisterForReflection</modelAnnotation>
+                            </modelAnnotations>
+                            <configOptions>
+                                <sourceFolder>launchpad</sourceFolder>
+                            </configOptions>
+                        </configuration>
+                    </execution> -->
+                    <execution>
+                        <?m2e execute onConfiguration,onIncremental?>
+                        <id>ahm-client</id>
+                        <goals>
+                            <goal>codegen</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>src/main/resources/META-INF/ahm-internal.yaml</inputSpec>
+                            <output>${project.build.directory}/generated-sources/proxy</output>
+                            <apiPackage>org.tkit.ahm.rs.proxy</apiPackage>
+                            <modelPackage>org.tkit.ahm.rs.proxy.models</modelPackage>
+                            <apiName>AhmRestClient</apiName>
+                            <generateSupportingFiles>false</generateSupportingFiles>
+                            <apiInterfaceDoc>false</apiInterfaceDoc>
+                            <fieldGen>LOMBOK</fieldGen>
+                            <jsonLib>JACKSON</jsonLib>
+                            <annotations>
+                                <annotation>javax.inject.Singleton</annotation>
+                                <annotation>org.tkit.quarkus.log.cdi.LogService</annotation>
+                                <annotation> org.eclipse.microprofile.rest.client.inject.RegisterRestClient(configKey="ahm")
+                                </annotation>
+                            </annotations>
+                            <modelAnnotations>
+                                <modelAnnotation>lombok.ToString</modelAnnotation>
+                                <modelAnnotation>com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown=true)</modelAnnotation>
+                                <modelAnnotation>io.quarkus.runtime.annotations.RegisterForReflection</modelAnnotation>
+                            </modelAnnotations>
+                            <configOptions>
+                                <sourceFolder>ahm</sourceFolder>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <?m2e execute onConfiguration,onIncremental?>
+                        <id>ahm-proxy</id>
+                        <goals>
+                            <goal>codegen</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>src/main/resources/META-INF/ahm-internal.yaml</inputSpec>
+                            <output>${project.build.directory}/generated-sources/proxy</output>
+                            <apiPackage>org.tkit.ahm.rs.proxy</apiPackage>
+                            <modelPackage>org.tkit.ahm.rs.proxy.models</modelPackage>
+                            <apiName>AhmRestController</apiName>
+                            <generateSupportingFiles>false</generateSupportingFiles>
+                            <apiInterfaceDoc>false</apiInterfaceDoc>
+                            <interfaceOnly>false</interfaceOnly>
+                            <implType>PROXY</implType>
+                            <fieldGen>LOMBOK</fieldGen>
+                            <jsonLib>JACKSON</jsonLib>
+                            <apiSuffix>RestController</apiSuffix>
+                            <proxyClientClass>AhmRestClient</proxyClientClass>
+                            <annotations>
+                                <annotation>javax.enterprise.context.ApplicationScoped</annotation>
+                            </annotations>
+                            <modelAnnotations>
+                                <modelAnnotation>lombok.ToString</modelAnnotation>
+                                <modelAnnotation>com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown=true)</modelAnnotation>
+                                <modelAnnotation>io.quarkus.runtime.annotations.RegisterForReflection</modelAnnotation>
+                            </modelAnnotations>
+                            <configOptions>
+                                <sourceFolder>ahm</sourceFolder>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
