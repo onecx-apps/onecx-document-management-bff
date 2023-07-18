@@ -23,14 +23,19 @@ the general documentation. Please refer to the following documentation
 to learn more
 https://onecx.github.io/docs/document-management/current/general/index.html[Document-Management
 Documenation]. However, in this document we are only referring to one of
-the three components, the OneCX-Document-Management-User-Interface (UI) of
+the three components, the OneCX-Document-Management-Backend-For-Frontend (BFF) of
 OneCX-Document-Management.
 
-The user interface (UI) for this document management component is designed to provide an intuitive and user-friendly experience for managing documents in the cloud-native environment built with Quarkus.
+=== What is a Backend For Frontend
+Backend For Frontend is an architectural pattern used in modern web development. The BFF pattern involves creating a dedicated backend service for each front-end client or application. This allows the backend to provide customised APIs and functionality optimised for the specific needs of each frontend.
+
+The code generation part of the `pom.xml` file is responsible for creating REST clients and proxies tailored to the backend services that the user interface needs to interact with. These clients and proxies act as the backend for the frontend, providing a dedicated and optimised interface for the document management frontend application. This architectural pattern provides a better separation of concerns, improves frontend performance and simplifies the frontend development process, as it only needs to deal with the APIs relevant to its functionality.
+
+The BFF pattern is particularly useful in microservices architectures, such as the OneCX workspaces, where different front-end clients may require different data and functionality from multiple back-end services.
 
 === Getting Started
 
-To start developing the OneCX Document Management User Interface, you need to
+To start developing the OneCX Document Management BFF, you need to
 set up your local development environment. It’s recommended that you use
 WSL as the runtime for your application, as shown in the figure below.
 If you are using a different runtime, please check that you meet the
@@ -45,7 +50,6 @@ Before you begin, ensure you have the following installed:
 * Git
 * Docker + Docker Compose (Windows Subsystem for Linux (WSL)
 recommended)
-* NodeJS
 
 ==== Clone the Repository
 
@@ -54,12 +58,12 @@ the following command:
 
 [source,bash]
 ----
-git clone https://github.com/onecx-apps/onecx-document-management-ui.git
+git clone https://github.com/onecx-apps/onecx-document-management-bff.git
 git clone https://github.com/onecx-apps/document-management-dev.git
 ----
 
-The repository `onecx-document-management-ui` contains the source code of
-the document management user interface. The repository
+The repository `onecx-document-management-bff` contains the source code of
+the document management BFF. The repository
 `document-management-dev` contains the necessary OneCX platform
 dependencies and the docker-compose script required to run the OneCX
 Document-Management-User-Interface on your local machine.
@@ -70,8 +74,8 @@ Navigate to the project directory and build the application using NPM:
 
 [source,bash]
 ----
-cd onecx-document-management-ui
-node install
+cd onecx-document-management-bff
+mvn clean install
 ----
 
 Downloading the required Maven dependencies for the first time may take
@@ -178,15 +182,33 @@ tasks before shutting down.
 docker-compose stop
 ----
 
-==== Starting the OneCX Document Management User Interface
+==== Starting the OneCX Document Management BFF
 
-The command mvn compile quarkus:dev is used in a Maven-based Quarkus
+The command `mvn compile quarkus:dev` is used in a Maven-based Quarkus
 project to compile the source code and start a live coding development
 mode. In this mode, Quarkus will automatically rebuild and redeploy the
 application whenever changes are detected in the source code, allowing
 for rapid development and testing.
 
+Please run:
 [source,bash]
 ----
-tbd
+mvn compile quarkus:dev
 ----
+
+Commands Explained:
+
+* `mvn compile`: This command tells Maven to compile the source code of
+the project. It resolves dependencies, compiles the Java source files,
+and generates the compiled bytecode.
+* `quarkus:dev`: This is a Maven plugin goal provided by the Quarkus
+framework. It starts the Quarkus dev mode, which is a live coding mode
+for development. It launches your application in development mode, which
+includes features like hot-reloading and automatic recompilation.
+
+When you run mvn compile quarkus:dev, the build process compiles your
+application, and once it’s built, Quarkus starts a development server
+that listens for changes in the source code. If any changes are
+detected, the affected parts of the application are automatically
+recompiled and redeployed, allowing you to see the changes in real-time
+without restarting the application manually.
