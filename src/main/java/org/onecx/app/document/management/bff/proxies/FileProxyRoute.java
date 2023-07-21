@@ -1,4 +1,4 @@
-package org.tkit.app.document.management.bff.proxies;
+package org.onecx.app.document.management.bff.proxies;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;

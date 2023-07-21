@@ -1,4 +1,4 @@
-package org.tkit.app.document.management.bff.proxies;
+package org.onecx.app.document.management.bff.proxies;
 
 import io.quarkus.logging.Log;
 import io.vertx.core.Handler;
