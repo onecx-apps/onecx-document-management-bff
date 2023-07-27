@@ -71,7 +71,6 @@ dependencies and the docker-compose script required to run the OneCX
 Document-Management-User-Interface on your local machine.
 
 ==== Build the Project
-
 Navigate to the project directory and build the application using NPM:
 
 [source,bash]
@@ -84,15 +83,19 @@ Downloading the required Maven dependencies for the first time may take
 some time.
 
 ==== Update local DNS resolution
+Assuming you are using WSL, updating the local host file for local 
+development allows you to map domain names to specific IP addresses,
+making it easier to test and debug applications using custom domain names
+instead of IP addresses. To enable multiple services on the same port,
+we use traefik as a reverse proxy. A running traefik container is 
+therefore essential for your local setup to route your traffic to the
+appropriate Docker containers based on hostnames.
 
-Assuming you use WSL, Updating the local host file for local development
-allows you to map domain names to specific IP addresses, making it
-easier to test and debug applications using custom domain names instead
-of IP addresses. To achieve this, it is recommended that the entries in
-the Linux subsystem and Windows are aligned.
+*It is recommended that the WSL host file and the Windows host file are aligned.
+Unless you have disabled this behaviour, the WSL host file will be automatically
+generated from the Windows host file when WSL is restarted.*
 
 ===== Update Windows host file
-
 Open the file `C:\Windows\System32\drivers\etc\hosts` in your favorite
 editor and add the following entries:
 
@@ -102,34 +105,21 @@ editor and add the following entries:
 127.0.0.1       postgresdb
 127.0.0.1       keycloak-app
 127.0.0.1       traefik
-127.0.0.1       sonar
-127.0.0.1       jaeger
-127.0.0.1       tkit-portal
 127.0.0.1       tkit-portal-app
-127.0.0.1       data-mgmt-ui-app
-127.0.0.1       data-mgmt-ui
 127.0.0.1       tkit-portal-server
+127.0.0.1       apm
+127.0.0.1       wiremock
+127.0.0.1       minio
+127.0.0.1       onecx-document-management-ui
+127.0.0.1       onecx-document-management-bff
+127.0.0.1       onecx-document-management-svc
 ----
 
 ===== Update WSL host file
-
-Open the file `\etc\hosts` in `your` favorite linux editor and add the
+If needed, update the file `\etc\hosts` in `your` favorite linux editor and add the
 same entries like above.
 
-==== Add Mageta Trusted Repository
-
-In order to resolve and download the required docker images defined in
-the docker-compose file an additional docker registry must be defined.
-
-[source,bash]
-----
-docker login mtr.devops.telekom.de
-username: [your MTR username]
-password: [your MTR access token]
-----
-
 ==== Starting OneCX dependencies
-
 In a local development environment, Docker Compose is used to define and
 manage multiple containers as a single application stack. It enables
 developers to easily start, stop, and configure all the necessary
@@ -139,7 +129,7 @@ simple configuration file.
 [source,bash]
 ----
 cd document-management-dev
-docker-compose up -d traefik postgresdb pgadmin keycloak-app tkit-portal-server minio apm
+docker compose up -d traefik postgresdb pgadmin keycloak-app tkit-portal-server minio apm
 ----
 
 * `traefik`: Traefik is an ingress controller for Kubernetes deployments
@@ -172,18 +162,6 @@ the Keycloak admin console and are retrieved from tokens, while strings
 defined in APM are used to grant access to specific components or views
 on the frontend.
 
-==== Stopping OneCX dependencies
-
-The `docker-compose stop` command is used to stop the containers defined
-in a Docker Compose file. It gracefully stops the running containers by
-sending a stop signal, allowing them to perform any necessary cleanup
-tasks before shutting down.
-
-[source,bash]
-----
-docker-compose stop
-----
-
 ==== Starting the OneCX Document Management BFF
 
 The command `mvn compile quarkus:dev` is used in a Maven-based Quarkus
@@ -195,6 +173,7 @@ for rapid development and testing.
 Please run:
 [source,bash]
 ----
+cd onecx-document-management-bff
 mvn compile quarkus:dev
 ----
 
@@ -214,3 +193,16 @@ that listens for changes in the source code. If any changes are
 detected, the affected parts of the application are automatically
 recompiled and redeployed, allowing you to see the changes in real-time
 without restarting the application manually.
+
+==== Stopping OneCX dependencies
+
+The `docker compose stop` command is used to stop the containers defined
+in a Docker Compose file. It gracefully stops the running containers by
+sending a stop signal, allowing them to perform any necessary cleanup
+tasks before shutting down.
+
+[source,bash]
+----
+cd onecx-document-management-dev
+docker compose stop
+----
