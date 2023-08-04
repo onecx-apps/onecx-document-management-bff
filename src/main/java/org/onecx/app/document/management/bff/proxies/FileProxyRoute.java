@@ -8,7 +8,6 @@ import org.tkit.quarkus.log.cdi.LogExclude;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpClient;
-import io.vertx.core.http.HttpClientOptions;
 import io.vertx.ext.web.Router;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,7 +23,7 @@ public class FileProxyRoute {
             @ConfigProperty(name = "documentmgmt/mp-rest/url") String processUrl,
             @ConfigProperty(name = "dms.file-upload.proxy-path") String path) {
         this.baseUrl = processUrl;
-        this.httpClient = vertx.createHttpClient(new HttpClientOptions());
+        this.httpClient = vertx.createHttpClient();
         this.proxyPath = path;
     }
 
@@ -32,5 +31,4 @@ public class FileProxyRoute {
         log.info("Adding proxy route for logo upload endpoint path {} with a proxy forward to {}", proxyPath, baseUrl);
         router.route(proxyPath).handler(ProxyHandler.create(httpClient, baseUrl));
     }
-
 }
