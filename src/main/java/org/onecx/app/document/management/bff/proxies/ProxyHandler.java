@@ -7,29 +7,27 @@ import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.http.RequestOptions;
 import io.vertx.ext.web.RoutingContext;
-import io.vertx.ext.web.client.WebClient;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ProxyHandler implements Handler<RoutingContext> {
-  private final String baseUrl;
-  private HttpClient httpClient;
-  private WebClient webClient;
+    private final String baseUrl;
+    private HttpClient httpClient;
 
-  private ProxyHandler(HttpClient client, String baseUrl) {
-    this.httpClient = client;
-    this.baseUrl = baseUrl;
-  }
+    private ProxyHandler(HttpClient client, String baseUrl) {
+        this.httpClient = client;
+        this.baseUrl = baseUrl;
+    }
 
-  public static ProxyHandler create(HttpClient httpClient, String baseUrl) {
-    return new ProxyHandler(httpClient, baseUrl);
-  }
+    public static ProxyHandler create(HttpClient httpClient, String baseUrl) {
+        return new ProxyHandler(httpClient, baseUrl);
+    }
 
     @Override
     public void handle(RoutingContext routingContext) {
         HttpServerRequest serverRequest = routingContext.request();
         log.debug("Proxying request {} {} to {}{}", serverRequest.method().name(),
-          serverRequest.uri(), this.baseUrl, serverRequest.uri());
+                serverRequest.uri(), this.baseUrl, serverRequest.uri());
         HttpServerResponse serverResponse = serverRequest.response();
         httpClient.request(new RequestOptions()
                 .setAbsoluteURI(this.baseUrl + serverRequest.uri())
@@ -38,7 +36,7 @@ public class ProxyHandler implements Handler<RoutingContext> {
                     clientRequest.headers().setAll(serverRequest.headers().remove(HttpHeaderNames.HOST));
                     clientRequest.send(serverRequest).onSuccess(clientResponse -> {
                         log.debug("Proxying {} response from {} to the client.", clientResponse.statusCode(),
-                                 clientRequest.absoluteURI());
+                                clientRequest.absoluteURI());
                         serverResponse.setStatusCode(clientResponse.statusCode());
                         serverResponse.headers().setAll(clientResponse.headers());
                         serverResponse.send(clientResponse);

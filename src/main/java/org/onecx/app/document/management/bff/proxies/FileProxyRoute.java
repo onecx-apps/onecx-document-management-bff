@@ -1,14 +1,15 @@
 package org.onecx.app.document.management.bff.proxies;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Observes;
+
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.tkit.quarkus.log.cdi.LogExclude;
+
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpClient;
 import io.vertx.ext.web.Router;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.tkit.quarkus.log.cdi.LogExclude;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Observes;
 
 @ApplicationScoped
 @Slf4j
