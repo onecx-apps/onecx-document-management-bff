@@ -1,43 +1,75 @@
-import static org.assertj.core.api.Assertions.assertThat;
+package org.onecx.app.document.management.bff.proxies;
 
-import org.junit.jupiter.api.Test;
-
+import io.netty.handler.codec.http.HttpHeaderNames;
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.vertx.http.runtime.QuarkusHttpHeaders;
+import io.vertx.core.Future;
+import io.vertx.core.MultiMap;
+import io.vertx.core.http.*;
+import io.vertx.ext.web.RoutingContext;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@Slf4j
 @QuarkusTest
+@Slf4j
 public class ProxyHandlerTest {
 
-    private ProxyHandler proxyHandler;
-    private final String baseUrl = "baseURL";
-    private HttpClient httpClient;
+  private ProxyHandler proxyHandler;
+  private final String baseUrl = "http://test.de";
+  private final String uri = "/api/resource";
+  @Mock
+  private HttpClient httpClient;
 
-    @BeforeMethod
-    public void setUp() {
-        httpClient = mock(HttpClient.class);
-        proxyHandler = new ProxyHandler(httpClient, baseUrl)
-    }
+  @BeforeEach
+  public void setUp() {
+    httpClient = spy(HttpClient.class);
+    proxyHandler = ProxyHandler.create(httpClient, baseUrl);
+  }
 
-    @Test
-    public void testHandle() {
-        //given
+  @Test
+  public void testOnSuccessHandle() {
+    //given
+    RoutingContext routingContext = spy(RoutingContext.class);
+    HttpServerRequest inputRequest = mock(HttpServerRequest.class);
+    HttpServerResponse proxyResponse = mock(HttpServerResponse.class);
+    HttpClientRequest proxyRequest = mock(HttpClientRequest.class);
 
-        //when
-        proxyHandler.handle
-        //then
+    MultiMap initialRequestHeaders = new QuarkusHttpHeaders();
+    initialRequestHeaders.add(HttpHeaderNames.HOST, "host123");
+    initialRequestHeaders.add(HttpHeaderNames.USER_AGENT, "agent123");
 
-    }
+    MultiMap expectedRequestHeaders = new QuarkusHttpHeaders().add(HttpHeaderNames.USER_AGENT, "agent123");
+    MultiMap proxyResponseHeaders = new QuarkusHttpHeaders().add(HttpHeaderNames.ACCEPT, "accept");
 
-    @Test
-    public void testCreate() {
-        //given
-        HttpClient testHttpClient = new HttpClient();
-        String testBaseUrl = "testBaseUrl";
-        proxyHandler = new ProxyHandler(testHttpClient, testBaseUrl)
+    when(routingContext.request()).thenReturn(inputRequest);
+    when(inputRequest.method()).thenReturn(HttpMethod.GET);
+    when(inputRequest.uri()).thenReturn(uri);
+    when(inputRequest.headers()).thenReturn(initialRequestHeaders);
 
-        //when
-        ProxyHandler = proxyHandler.create(testHttpClient, testBaseUrl)
-        //then
-        assertThat(proxyHandler.).isEqualTo(true);
+    when(inputRequest.response()).thenReturn(proxyResponse);
+
+    when(proxyRequest.headers()).thenReturn(mock(MultiMap.class));
+    when(proxyRequest.absoluteURI()).thenReturn(baseUrl + uri);
+    when(httpClient.request(any(RequestOptions.class))).thenReturn(Future.succeededFuture(proxyRequest));
+
+    HttpClientResponse clientResponse = mock(HttpClientResponse.class);
+    when(clientResponse.statusCode()).thenReturn(200);
+    when(clientResponse.headers()).thenReturn(proxyResponseHeaders);
+    when(proxyResponse.headers()).thenReturn(mock(MultiMap.class));
+    when(proxyRequest.send(inputRequest)).thenReturn(Future.succeededFuture(clientResponse));
+
+    //when
+    proxyHandler.handle(routingContext);
+
+    //then
+    verify(proxyRequest.headers(), times(1)).setAll(eq(expectedRequestHeaders));
+    verify(proxyResponse, times(1)).setStatusCode(200);
+    verify(proxyResponse.headers(), times(1)).setAll(proxyResponseHeaders);
+    verify(proxyResponse, times(1)).send(clientResponse);
+  }
 }
