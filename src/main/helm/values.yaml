@@ -2,6 +2,4 @@ app:
   image:
     repository: "onecx-apps/onecx-document-management-bff"
     tag: 999-SNAPSHOT
-  db:
-    enabled: true
   product: false
