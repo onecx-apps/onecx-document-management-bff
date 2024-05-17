@@ -4,3 +4,4 @@ app:
     tag: 999-SNAPSHOT
   db:
     enabled: true
+  product: false
