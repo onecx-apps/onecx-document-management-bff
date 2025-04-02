@@ -2,4 +2,13 @@ app:
   image:
     repository: "onecx-apps/onecx-document-management-bff"
     tag: 999-SNAPSHOT
+  operator:
+    # Permission
+    keycloak:
+      client:
+        enabled: true
+        spec:
+          kcConfig:
+            defaultClientScopes: [ ocx-doc:all, ocx-doc:read, ocx-doc:write ]
+
   product: false

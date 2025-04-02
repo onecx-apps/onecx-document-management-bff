@@ -1,7 +1,12 @@
-== OneCX Document-Management-Backend-For-Frontend
-image:https://github.com/onecx-apps/onecx-document-management-bff/actions/workflows/build.yml/badge.svg[OneCX Document Management BFF]
+include::onecx-document-management-bff-attributes.adoc[opts=optional]
 
-=== What is Document Management
+== onecx-document-management-bff
+
+include::docs.adoc[opts=optional]
+
+
+include::onecx-document-management-bff-docs.adoc[opts=optional]
+t Management
 
 Document management refers to the systematic process of capturing,
 organizing, storing, and retrieving documents within an organization. It

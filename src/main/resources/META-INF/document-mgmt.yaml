@@ -12,6 +12,10 @@ tags:
 paths:
   /v1/document:
     get:
+      x-onecx:
+        permissions:
+          themes:
+            - read
       tags:
       - DocumentControllerV1
       description: Gets documents by criteria
@@ -98,6 +102,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/PageResultDTO'
     post:
+      security:
+        - oauth2: [ ocx-doc:all, ocx-doc:write ]
+      x-onecx:
+        permissions:
+          themes:
+            - write
       tags:
       - DocumentControllerV1
       description: Create Document
