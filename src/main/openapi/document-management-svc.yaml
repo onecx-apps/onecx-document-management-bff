@@ -85,13 +85,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PageResultDTO'
+                $ref: '#/components/schemas/PageResult'
         "400":
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
         "403":
           description: Not Authorized
         "500":
@@ -99,7 +99,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
         "401":
           description: Not Authorized
     post:
@@ -113,7 +113,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DocumentCreateUpdateDTO'
+              $ref: '#/components/schemas/DocumentCreateUpdate'
       responses:
         "201":
           description: Created Document resource
@@ -126,13 +126,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DocumentDetailDTO'
+                $ref: '#/components/schemas/DocumentDetail'
         "400":
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
         "403":
           description: Not Authorized
         "500":
@@ -140,7 +140,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
         "401":
           description: Not Authorized
   /v1/document-specification:
@@ -157,19 +157,19 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/DocumentSpecificationDTO'
+                  $ref: '#/components/schemas/DocumentSpecification'
         "404":
           description: Not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
         "500":
           description: "Internal Server Error, please check Problem Details"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
     post:
       tags:
         - DocumentSpecificationControllerV1
@@ -179,26 +179,26 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DocumentSpecificationCreateUpdateDTO'
+              $ref: '#/components/schemas/DocumentSpecificationCreateUpdate'
       responses:
         "201":
           description: Created specification of document
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DocumentSpecificationDTO'
+                $ref: '#/components/schemas/DocumentSpecification'
         "404":
           description: Not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
         "500":
           description: "Internal Server Error, please check Problem Details"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
   /v1/document-specification/{id}:
     get:
       tags:
@@ -217,19 +217,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DocumentSpecificationDTO'
+                $ref: '#/components/schemas/DocumentSpecification'
         "404":
           description: Not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
         "500":
           description: "Internal Server Error, please check Problem Details"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
     put:
       tags:
         - DocumentSpecificationControllerV1
@@ -245,26 +245,26 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DocumentSpecificationCreateUpdateDTO'
+              $ref: '#/components/schemas/DocumentSpecificationCreateUpdate'
       responses:
         "200":
           description: Updated specification of document by id
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DocumentSpecificationDTO'
+                $ref: '#/components/schemas/DocumentSpecification'
         "404":
           description: Not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
         "500":
           description: "Internal Server Error, please check Problem Details"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
     delete:
       tags:
         - DocumentSpecificationControllerV1
@@ -284,19 +284,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
         "404":
           description: Not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
         "500":
           description: "Internal Server Error, please check Problem Details"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
   /v1/document-type:
     get:
       tags:
@@ -311,19 +311,19 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/DocumentTypeDTO'
+                  $ref: '#/components/schemas/DocumentType'
         "404":
           description: Not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
         "500":
           description: "Internal Server Error, please check Problem Details"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
     post:
       tags:
         - DocumentTypeControllerV1
@@ -333,26 +333,26 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DocumentTypeCreateUpdateDTO'
+              $ref: '#/components/schemas/DocumentTypeCreateUpdate'
       responses:
         "201":
           description: Created type of document
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DocumentTypeDTO'
+                $ref: '#/components/schemas/DocumentType'
         "404":
           description: Not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
         "500":
           description: "Internal Server Error, please check Problem Details"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
   /v1/document-type/{id}:
     get:
       tags:
@@ -371,19 +371,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DocumentTypeDTO'
+                $ref: '#/components/schemas/DocumentType'
         "404":
           description: Not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
         "500":
           description: "Internal Server Error, please check Problem Details"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
     put:
       tags:
         - DocumentTypeControllerV1
@@ -399,26 +399,26 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DocumentTypeCreateUpdateDTO'
+              $ref: '#/components/schemas/DocumentTypeCreateUpdate'
       responses:
         "201":
           description: Updated type of document by id
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DocumentTypeDTO'
+                $ref: '#/components/schemas/DocumentType'
         "404":
           description: Not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
         "500":
           description: "Internal Server Error, please check Problem Details"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
     delete:
       tags:
         - DocumentTypeControllerV1
@@ -438,19 +438,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
         "404":
           description: Not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
         "500":
           description: "Internal Server Error, please check Problem Details"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
   /v1/document/bulkupdate:
     put:
       security:
@@ -465,7 +465,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/DocumentCreateUpdateDTO'
+                $ref: '#/components/schemas/DocumentCreateUpdate'
       responses:
         "200":
           description: OK
@@ -474,7 +474,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/DocumentDetailDTO'
+                  $ref: '#/components/schemas/DocumentDetail'
         "403":
           description: Not Authorized
         "404":
@@ -482,13 +482,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
         "500":
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
         "401":
           description: Not Authorized
   /v1/document/channels:
@@ -505,13 +505,13 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ChannelDTO'
+                  $ref: '#/components/schemas/Channel'
         "500":
           description: "Internal Server Error, please check Problem Details"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
   /v1/document/delete-bulk-documents:
     delete:
       security:
@@ -537,13 +537,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
         "500":
           description: "Internal Server Error, please check Problem Details"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
         "401":
           description: Not Authorized
   /v1/document/file/delete-bulk-attachment:
@@ -666,13 +666,13 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/StorageUploadAuditDTO'
+                  $ref: '#/components/schemas/StorageUploadAudit'
         "404":
           description: Not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
         "403":
           description: Not Authorized
         "500":
@@ -680,7 +680,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
         "401":
           description: Not Authorized
   /v1/document/show-all-documents:
@@ -759,13 +759,13 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/DocumentDetailDTO'
+                  $ref: '#/components/schemas/DocumentDetail'
         "400":
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
         "403":
           description: Not Authorized
         "500":
@@ -773,7 +773,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
         "401":
           description: Not Authorized
   /v1/document/{id}:
@@ -796,7 +796,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DocumentDetailDTO'
+                $ref: '#/components/schemas/DocumentDetail'
         "403":
           description: Not Authorized
         "404":
@@ -804,13 +804,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
         "500":
           description: "Internal Server Error, please check Problem Details"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
         "401":
           description: Not Authorized
     put:
@@ -830,20 +830,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DocumentCreateUpdateDTO'
+              $ref: '#/components/schemas/DocumentCreateUpdate'
       responses:
         "200":
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DocumentDetailDTO'
+                $ref: '#/components/schemas/DocumentDetail'
         "404":
           description: Not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
         "403":
           description: Not Authorized
         "500":
@@ -851,7 +851,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
         "401":
           description: Not Authorized
     delete:
@@ -877,13 +877,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
         "500":
           description: "Internal Server Error, please check Problem Details"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
         "401":
           description: Not Authorized
   /v1/files/bucket/{name}:
@@ -1015,19 +1015,19 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/SupportedMimeTypeDTO'
+                  $ref: '#/components/schemas/SupportedMimeType'
         "404":
           description: Not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
         "500":
           description: "Internal Server Error, please check Problem Details"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
     post:
       tags:
         - SupportedMimeTypeControllerV1
@@ -1037,26 +1037,26 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SupportedMimeTypeCreateUpdateDTO'
+              $ref: '#/components/schemas/SupportedMimeTypeCreateUpdate'
       responses:
         "201":
           description: Created supported mime-type
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SupportedMimeTypeDTO'
+                $ref: '#/components/schemas/SupportedMimeType'
         "404":
           description: Not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
         "500":
           description: "Internal Server Error, please check Problem Details"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
   /v1/supported-mime-type/{id}:
     get:
       tags:
@@ -1075,19 +1075,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SupportedMimeTypeDTO'
+                $ref: '#/components/schemas/SupportedMimeType'
         "404":
           description: Not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
         "500":
           description: "Internal Server Error, please check Problem Details"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
     put:
       tags:
         - SupportedMimeTypeControllerV1
@@ -1103,26 +1103,26 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SupportedMimeTypeCreateUpdateDTO'
+              $ref: '#/components/schemas/SupportedMimeTypeCreateUpdate'
       responses:
         "200":
           description: Updated supported mime-type by id
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SupportedMimeTypeDTO'
+                $ref: '#/components/schemas/SupportedMimeType'
         "404":
           description: Not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
         "500":
           description: "Internal Server Error, please check Problem Details"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
     delete:
       tags:
         - SupportedMimeTypeControllerV1
@@ -1142,19 +1142,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
         "404":
           description: Not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
         "500":
           description: "Internal Server Error, please check Problem Details"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RFCProblemDTO'
+                $ref: '#/components/schemas/RFCProblem'
   /v1/document/files/upload/{documentId}:
     post:
       tags:
@@ -1183,7 +1183,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DocumentResponseDTO'
+                $ref: '#/components/schemas/DocumentResponse'
         '400':
           description: Bad request
         '403':
@@ -1199,7 +1199,7 @@ paths:
 
 components:
   schemas:
-    AttachmentCreateUpdateDTO:
+    AttachmentCreateUpdate:
       type: object
       properties:
         id:
@@ -1211,14 +1211,14 @@ components:
         type:
           type: string
         validFor:
-          $ref: '#/components/schemas/TimePeriodDTO'
+          $ref: '#/components/schemas/TimePeriod'
         mimeTypeId:
           type: string
         file:
           type: string
         fileName:
           type: string
-    AttachmentDTO:
+    Attachment:
       type: object
       properties:
         modificationCount:
@@ -1245,13 +1245,13 @@ components:
         sizeUnit:
           $ref: '#/components/schemas/AttachmentUnit'
         validFor:
-          $ref: '#/components/schemas/TimePeriodDTO'
+          $ref: '#/components/schemas/TimePeriod'
         storage:
           type: string
         externalStorageURL:
           type: string
         mimeType:
-          $ref: '#/components/schemas/SupportedMimeTypeDTO'
+          $ref: '#/components/schemas/SupportedMimeType'
         fileName:
           type: string
         storageUploadStatus:
@@ -1260,7 +1260,7 @@ components:
       enum:
         - BYTES
       type: string
-    CategoryCreateUpdateDTO:
+    CategoryCreateUpdate:
       type: object
       properties:
         id:
@@ -1269,7 +1269,7 @@ components:
           type: string
         categoryVersion:
           type: string
-    CategoryDTO:
+    Category:
       type: object
       properties:
         modificationCount:
@@ -1289,41 +1289,14 @@ components:
           type: string
         categoryVersion:
           type: string
-    ChannelCreateUpdateDTO:
+    ChannelCreateUpdate:
       type: object
       properties:
         id:
           type: string
         name:
           type: string
-    ChannelDTO:
-      type: object
-      properties:
-        modificationCount:
-          format: int32
-          type: integer
-        creationDate:
-          $ref: '#/components/schemas/OffsetDateTime'
-        creationUser:
-          type: string
-        modificationDate:
-          $ref: '#/components/schemas/OffsetDateTime'
-        modificationUser:
-          type: string
-        id:
-          type: string
-        name:
-          type: string
-    DocumentCharacteristicCreateUpdateDTO:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        value:
-          type: string
-    DocumentCharacteristicDTO:
+    Channel:
       type: object
       properties:
         modificationCount:
@@ -1341,9 +1314,36 @@ components:
           type: string
         name:
           type: string
+    DocumentCharacteristicCreateUpdate:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
         value:
           type: string
-    DocumentCreateUpdateDTO:
+    DocumentCharacteristic:
+      type: object
+      properties:
+        modificationCount:
+          format: int32
+          type: integer
+        creationDate:
+          $ref: '#/components/schemas/OffsetDateTime'
+        creationUser:
+          type: string
+        modificationDate:
+          $ref: '#/components/schemas/OffsetDateTime'
+        modificationUser:
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+        value:
+          type: string
+    DocumentCreateUpdate:
       required:
         - name
         - typeId
@@ -1379,36 +1379,36 @@ components:
         typeId:
           type: string
         specification:
-          $ref: '#/components/schemas/DocumentSpecificationCreateUpdateDTO'
+          $ref: '#/components/schemas/DocumentSpecificationCreateUpdate'
         channel:
-          $ref: '#/components/schemas/ChannelCreateUpdateDTO'
+          $ref: '#/components/schemas/ChannelCreateUpdate'
         documentRelationships:
           uniqueItems: true
           type: array
           items:
-            $ref: '#/components/schemas/DocumentRelationshipCreateUpdateDTO'
+            $ref: '#/components/schemas/DocumentRelationshipCreateUpdate'
         characteristics:
           uniqueItems: true
           type: array
           items:
-            $ref: '#/components/schemas/DocumentCharacteristicCreateUpdateDTO'
+            $ref: '#/components/schemas/DocumentCharacteristicCreateUpdate'
         relatedParties:
           uniqueItems: true
           type: array
           items:
-            $ref: '#/components/schemas/RelatedPartyRefCreateUpdateDTO'
+            $ref: '#/components/schemas/RelatedPartyRefCreateUpdate'
         relatedObject:
-          $ref: '#/components/schemas/RelatedObjectRefCreateUpdateDTO'
+          $ref: '#/components/schemas/RelatedObjectRefCreateUpdate'
         categories:
           uniqueItems: true
           type: array
           items:
-            $ref: '#/components/schemas/CategoryCreateUpdateDTO'
+            $ref: '#/components/schemas/CategoryCreateUpdate'
         attachments:
           type: array
           items:
-            $ref: '#/components/schemas/AttachmentCreateUpdateDTO'
-    DocumentDetailDTO:
+            $ref: '#/components/schemas/AttachmentCreateUpdate'
+    DocumentDetail:
       type: object
       properties:
         modificationCount:
@@ -1433,43 +1433,43 @@ components:
         documentVersion:
           type: string
         channel:
-          $ref: '#/components/schemas/ChannelDTO'
+          $ref: '#/components/schemas/Channel'
         tags:
           uniqueItems: true
           type: array
           items:
             type: string
         type:
-          $ref: '#/components/schemas/DocumentTypeDTO'
+          $ref: '#/components/schemas/DocumentType'
         specification:
-          $ref: '#/components/schemas/DocumentSpecificationDTO'
+          $ref: '#/components/schemas/DocumentSpecification'
         documentRelationships:
           uniqueItems: true
           type: array
           items:
-            $ref: '#/components/schemas/DocumentRelationshipDTO'
+            $ref: '#/components/schemas/DocumentRelationship'
         characteristics:
           uniqueItems: true
           type: array
           items:
-            $ref: '#/components/schemas/DocumentCharacteristicDTO'
+            $ref: '#/components/schemas/DocumentCharacteristic'
         relatedParties:
           uniqueItems: true
           type: array
           items:
-            $ref: '#/components/schemas/RelatedPartyRefDTO'
+            $ref: '#/components/schemas/RelatedPartyRef'
         relatedObject:
-          $ref: '#/components/schemas/RelatedObjectRefDTO'
+          $ref: '#/components/schemas/RelatedObjectRef'
         categories:
           uniqueItems: true
           type: array
           items:
-            $ref: '#/components/schemas/CategoryDTO'
+            $ref: '#/components/schemas/Category'
         attachments:
           type: array
           items:
-            $ref: '#/components/schemas/AttachmentDTO'
-    DocumentSearchCriteriaDTO:
+            $ref: '#/components/schemas/Attachment'
+    DocumentSearchCriteria:
       type: object
       properties:
         id:
@@ -1505,7 +1505,7 @@ components:
           minimum: 1
           maximum: 200
           default: 200
-    DocumentRelationshipCreateUpdateDTO:
+    DocumentRelationshipCreateUpdate:
       type: object
       properties:
         id:
@@ -1514,7 +1514,7 @@ components:
           type: string
         documentRefId:
           type: string
-    DocumentRelationshipDTO:
+    DocumentRelationship:
       type: object
       properties:
         modificationCount:
@@ -1534,14 +1534,14 @@ components:
           type: string
         documentRefId:
           type: string
-    DocumentSpecificationCreateUpdateDTO:
+    DocumentSpecificationCreateUpdate:
       type: object
       properties:
         name:
           type: string
         specificationVersion:
           type: string
-    DocumentSpecificationDTO:
+    DocumentSpecification:
       type: object
       properties:
         modificationCount:
@@ -1561,14 +1561,14 @@ components:
           type: string
         specificationVersion:
           type: string
-    DocumentTypeCreateUpdateDTO:
+    DocumentTypeCreateUpdate:
       required:
         - name
       type: object
       properties:
         name:
           type: string
-    DocumentTypeDTO:
+    DocumentType:
       type: object
       properties:
         modificationCount:
@@ -1635,7 +1635,7 @@ components:
       format: date-time
       type: string
       example: 2022-03-10T12:15:50-04:00
-    PageResultDTO:
+    PageResult:
       type: object
       properties:
         totalElements:
@@ -1654,7 +1654,7 @@ components:
           type: array
           items:
             type: object
-    RFCProblemDTO:
+    RFCProblem:
       required:
         - type
         - title
@@ -1674,8 +1674,8 @@ components:
         problems:
           type: array
           items:
-            $ref: '#/components/schemas/RFCProblemDetailDTO'
-    RFCProblemDetailDTO:
+            $ref: '#/components/schemas/RFCProblemDetail'
+    RFCProblemDetail:
       required:
         - message
         - messageId
@@ -1690,7 +1690,7 @@ components:
           type: string
         messageType:
           type: string
-    RelatedObjectRefCreateUpdateDTO:
+    RelatedObjectRefCreateUpdate:
       type: object
       properties:
         id:
@@ -1701,7 +1701,7 @@ components:
           type: string
         objectReferenceId:
           type: string
-    RelatedObjectRefDTO:
+    RelatedObjectRef:
       type: object
       properties:
         modificationCount:
@@ -1723,7 +1723,7 @@ components:
           type: string
         objectReferenceId:
           type: string
-    RelatedPartyRefCreateUpdateDTO:
+    RelatedPartyRefCreateUpdate:
       type: object
       properties:
         id:
@@ -1733,8 +1733,8 @@ components:
         role:
           type: string
         validFor:
-          $ref: '#/components/schemas/TimePeriodDTO'
-    RelatedPartyRefDTO:
+          $ref: '#/components/schemas/TimePeriod'
+    RelatedPartyRef:
       type: object
       properties:
         modificationCount:
@@ -1755,7 +1755,7 @@ components:
         role:
           type: string
         validFor:
-          $ref: '#/components/schemas/TimePeriodDTO'
+          $ref: '#/components/schemas/TimePeriod'
     RestException:
       type: object
       properties:
@@ -1814,7 +1814,7 @@ components:
         - HTTP_VERSION_NOT_SUPPORTED
         - NETWORK_AUTHENTICATION_REQUIRED
       type: string
-    StorageUploadAuditDTO:
+    StorageUploadAudit:
       type: object
       properties:
         modificationCount:
@@ -1872,7 +1872,7 @@ components:
           type: string
         objectReferenceId:
           type: string
-    SupportedMimeTypeCreateUpdateDTO:
+    SupportedMimeTypeCreateUpdate:
       required:
         - name
       type: object
@@ -1881,7 +1881,7 @@ components:
           type: string
         description:
           type: string
-    SupportedMimeTypeDTO:
+    SupportedMimeType:
       type: object
       properties:
         modificationCount:
@@ -1901,14 +1901,14 @@ components:
           type: string
         description:
           type: string
-    TimePeriodDTO:
+    TimePeriod:
       type: object
       properties:
         startDateTime:
           $ref: '#/components/schemas/OffsetDateTime'
         endDateTime:
           $ref: '#/components/schemas/OffsetDateTime'
-    TraceableDTO:
+    Traceable:
       type: object
       properties:
         createdBy:
@@ -1922,9 +1922,9 @@ components:
           type: string
           format: date-time
 
-    DocumentResponseDTO:
+    DocumentResponse:
       allOf:
-        - $ref: '#/components/schemas/TraceableDTO'
+        - $ref: '#/components/schemas/Traceable'
         - type: object
           properties:
             attachmentResponse:
@@ -1937,7 +1937,7 @@ components:
       properties:
         file:
           type: File
-    FileInfoDTO:
+    FileInfo:
       type: object
       properties:
         contentType:
