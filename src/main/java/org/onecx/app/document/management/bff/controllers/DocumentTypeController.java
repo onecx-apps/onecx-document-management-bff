@@ -5,69 +5,71 @@ import java.util.List;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.Response;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.onecx.app.document.management.bff.mappers.DocumentMapper;
 
 import gen.org.tkit.onecx.document_management.client.api.DocumentTypeControllerV1Api;
-import gen.org.tkit.onecx.document_management.client.model.DocumentTypeCreateUpdateDTO;
-import gen.org.tkit.onecx.document_management.client.model.DocumentTypeDTO;
+import gen.org.tkit.onecx.document_management.rs.internal.DocumentTypeControllerV1ApiService;
+import gen.org.tkit.onecx.document_management.rs.internal.model.DocumentType;
+import gen.org.tkit.onecx.document_management.rs.internal.model.DocumentTypeCreateUpdate;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @ApplicationScoped
-public class DocumentTypeController implements DocumentTypeControllerV1Api {
+public class DocumentTypeController implements DocumentTypeControllerV1ApiService {
     @Inject
     @RestClient
     DocumentTypeControllerV1Api documentTypeControllerV1Api;
 
+    @Inject
+    DocumentMapper mapper;
+
     @Override
-    public DocumentTypeDTO createDocumentType(DocumentTypeCreateUpdateDTO documentTypeCreateUpdateDTO) {
-        try {
-            return documentTypeControllerV1Api.createDocumentType(documentTypeCreateUpdateDTO);
-        } catch (Exception e) {
-            log.error("Error occurred while creating document type", e);
-            throw new RuntimeException("Error occurred while creating document type", e);
+    public Response createDocumentType(DocumentTypeCreateUpdate documentTypeCreateUpdate) {
+        try (Response response = documentTypeControllerV1Api.createDocumentType(mapper.map(documentTypeCreateUpdate))) {
+            return Response.status(response.getStatus())
+                    .entity(response.readEntity(DocumentType.class))
+                    .build();
         }
     }
 
     @Override
     public Response deleteDocumentTypeById(String id) {
-        try {
-            return documentTypeControllerV1Api.deleteDocumentTypeById(id);
-        } catch (Exception e) {
-            log.error("Error occurred while deleting document type", e);
-            throw new RuntimeException("Error occurred while deleting document type", e);
+        try (Response response = documentTypeControllerV1Api.deleteDocumentTypeById(id)) {
+            return response;
         }
     }
 
     @Override
-    public List<DocumentTypeDTO> getAllTypesOfDocument() {
-        try {
-            return documentTypeControllerV1Api.getAllTypesOfDocument();
-        } catch (Exception e) {
-            log.error("Error occurred while fetching all document types", e);
-            throw new RuntimeException("Error occurred while fetching all document types", e);
+    public Response getAllTypesOfDocument() {
+        try (Response response = documentTypeControllerV1Api.getAllTypesOfDocument()) {
+            List<DocumentType> documentTypeList = response.readEntity(new GenericType<List<DocumentType>>() {
+            });
+            return Response.status(response.getStatus())
+                    .entity(documentTypeList)
+                    .build();
         }
     }
 
     @Override
-    public DocumentTypeDTO getDocumentTypeById(String id) {
-        try {
-            return documentTypeControllerV1Api.getDocumentTypeById(id);
-        } catch (Exception e) {
-            log.error("Error occurred while fetching document type", e);
-            throw new RuntimeException("Error occurred while fetching document type", e);
+    public Response getDocumentTypeById(String id) {
+        try (Response response = documentTypeControllerV1Api.getDocumentTypeById(id)) {
+            return Response.status(response.getStatus())
+                    .entity(response.readEntity(DocumentType.class))
+                    .build();
         }
     }
 
     @Override
-    public DocumentTypeDTO updateDocumentTypeById(String id, DocumentTypeCreateUpdateDTO documentTypeCreateUpdateDTO) {
-        try {
-            return documentTypeControllerV1Api.updateDocumentTypeById(id, documentTypeCreateUpdateDTO);
-        } catch (Exception e) {
-            log.error("Error occurred while updating document type", e);
-            throw new RuntimeException("Error occurred while updating document type", e);
+    public Response updateDocumentTypeById(String id, DocumentTypeCreateUpdate documentTypeCreateUpdate) {
+        try (Response response = documentTypeControllerV1Api.updateDocumentTypeById(id,
+                mapper.map(documentTypeCreateUpdate))) {
+            return Response.status(response.getStatus())
+                    .entity(response.readEntity(DocumentType.class))
+                    .build();
         }
     }
 }

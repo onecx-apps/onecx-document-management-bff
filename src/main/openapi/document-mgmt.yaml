@@ -12,7 +12,7 @@ tags:
   - name: SupportedMimeTypeControllerV1
 
 paths:
-  /document:
+  /v1/document:
     get:
       tags:
         - DocumentControllerV1

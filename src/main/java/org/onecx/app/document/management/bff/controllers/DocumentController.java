@@ -5,167 +5,165 @@ import java.util.List;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.Response;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.jboss.resteasy.reactive.server.multipart.MultipartFormDataInput;
+import org.onecx.app.document.management.bff.mappers.DocumentMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import gen.org.tkit.onecx.document_management.client.api.DocumentControllerV1Api;
-import gen.org.tkit.onecx.document_management.client.model.*;
+import gen.org.tkit.onecx.document_management.rs.internal.DocumentControllerV1ApiService;
+import gen.org.tkit.onecx.document_management.rs.internal.model.*;
 
 @ApplicationScoped
-public class DocumentController implements DocumentControllerV1Api {
+public class DocumentController implements DocumentControllerV1ApiService {
     private static final Logger log = LoggerFactory.getLogger(DocumentController.class);
     @Inject
     @RestClient
     DocumentControllerV1Api documentControllerV1Api;
 
+    @Inject
+    DocumentMapper mapper;
+
     @Override
-    public List<DocumentDetailDTO> bulkUpdateDocument(List<DocumentCreateUpdateDTO> documentCreateUpdateDTO) {
-        try {
-            return documentControllerV1Api.bulkUpdateDocument(documentCreateUpdateDTO);
-        } catch (Exception e) {
-            log.error("Error occurred while updating the documents", e);
-            throw new RuntimeException("Error occurred while updating the documents", e);
+    public Response bulkUpdateDocument(List<DocumentCreateUpdate> documentCreateUpdate) {
+        try (Response response = documentControllerV1Api.bulkUpdateDocument(mapper.map(documentCreateUpdate))) {
+            return Response.status(response.getStatus())
+                    .entity(response.readEntity(DocumentDetail.class))
+                    .build();
         }
     }
 
     @Override
-    public DocumentDetailDTO createDocument(DocumentCreateUpdateDTO documentCreateUpdateDTO) {
-        try {
-            return documentControllerV1Api.createDocument(documentCreateUpdateDTO);
-        } catch (Exception e) {
-            log.error("Error occurred while creating document", e);
-            throw new RuntimeException("Error occurred while creating document", e);
+    public Response createDocument(DocumentCreateUpdate documentCreateUpdate) {
+        try (Response response = documentControllerV1Api.createDocument(mapper.map(documentCreateUpdate))) {
+            return Response.status(response.getStatus())
+                    .entity(response.readEntity(DocumentDetail.class))
+                    .build();
         }
     }
 
     @Override
     public Response deleteBulkDocuments(List<String> requestBody) {
-        try {
-            return documentControllerV1Api.deleteBulkDocuments(requestBody);
-        } catch (Exception e) {
-            log.error("Error occurred while deleting bulk documents", e);
-            throw new RuntimeException("Error occurred while deleting bulk documents", e);
+        try (Response response = documentControllerV1Api.deleteBulkDocuments(requestBody)) {
+            return Response.status(response.getStatus()).build();
         }
     }
 
     @Override
     public Response deleteDocumentById(String id) {
-        try {
-            return documentControllerV1Api.deleteDocumentById(id);
-        } catch (Exception e) {
-            log.error("Error occurred while deleting document by id", e);
-            throw new RuntimeException("Error occurred while deleting document by id", e);
+        try (Response response = documentControllerV1Api.deleteDocumentById(id)) {
+            return Response.status(response.getStatus()).build();
         }
     }
 
     @Override
     public Response deleteFilesInBulk(List<String> requestBody) {
-        try {
-            return documentControllerV1Api.deleteFilesInBulk(requestBody);
-        } catch (Exception e) {
-            log.error("Error occurred while deleting files in bulk", e);
-            throw new RuntimeException("Error occurred while deleting files in bulk", e);
+        try (Response response = documentControllerV1Api.deleteFilesInBulk(requestBody)) {
+            return Response.status(response.getStatus()).build();
         }
     }
 
     @Override
-    public List<ChannelDTO> getAllChannels() {
-        try {
-            return documentControllerV1Api.getAllChannels();
-        } catch (Exception e) {
-            log.error("Error occurred while fetching all channels", e);
-            throw new RuntimeException("Error occurred while fetching all channels", e);
+    public Response getAllChannels() {
+        try (Response response = documentControllerV1Api.getAllChannels()) {
+            List<Channel> channelList = response.readEntity(new GenericType<List<Channel>>() {
+            });
+            return Response.status(response.getStatus())
+                    .entity(channelList)
+                    .build();
         }
     }
 
     @Override
-    public File getAllDocumentAttachmentsAsZip(String documentId, String clientTimezone) {
-        try {
-            return documentControllerV1Api.getAllDocumentAttachmentsAsZip(documentId, clientTimezone);
-        } catch (Exception e) {
-            log.error("Error occurred while fetching document attachments as zip", e);
-            throw new RuntimeException("Error occurred while fetching document attachments as zip", e);
+    public Response getAllDocumentAttachmentsAsZip(String documentId, String clientTimezone) {
+        try (Response response = documentControllerV1Api.getAllDocumentAttachmentsAsZip(documentId, clientTimezone)) {
+            return Response.status(response.getStatus())
+                    .entity(response.readEntity(File.class))
+                    .build();
         }
     }
 
     @Override
-    public PageResultDTO getDocumentByCriteria(String channelName, String createdBy, String endDate, String id, String name,
+    public Response getDocumentByCriteria(String channelName, String createdBy, String endDate, String id, String name,
             String objectReferenceId, String objectReferenceType, Integer page, Integer size, String startDate,
             List<LifeCycleState> state, List<String> typeId) {
-        try {
-            return documentControllerV1Api.getDocumentByCriteria(channelName, createdBy, endDate, id, name, objectReferenceId,
-                    objectReferenceType, page, size, startDate, state, typeId);
-        } catch (Exception e) {
-            log.error("Error occurred while fetching documents by criteria", e);
-            throw new RuntimeException("Error occurred while fetching documents by criteria", e);
+        try (Response response = documentControllerV1Api.getDocumentByCriteria(channelName, createdBy, endDate, id, name,
+                objectReferenceId, objectReferenceType, page,
+                size, startDate, mapper.mapLifeCycle(state), typeId)) {
+            PageResult entity = response.readEntity(PageResult.class);
+            return Response.status(response.getStatus())
+                    .entity(response.readEntity(PageResult.class))
+                    .build();
         }
     }
 
     @Override
-    public DocumentDetailDTO getDocumentById(String id) {
-        try {
-            return documentControllerV1Api.getDocumentById(id);
-        } catch (Exception e) {
-            log.error("Error occurred while fetching document by id", e);
-            throw new RuntimeException("Error occurred while fetching document by id", e);
+    public Response getDocumentById(String id) {
+        try (Response response = documentControllerV1Api.getDocumentById(id)) {
+            return Response.status(response.getStatus())
+                    .entity(response.readEntity(DocumentDetail.class))
+                    .build();
         }
     }
 
     @Override
-    public List<StorageUploadAuditDTO> getFailedAttachmentData(String id) {
-        try {
-            return documentControllerV1Api.getFailedAttachmentData(id);
-        } catch (Exception e) {
-            log.error("Error occurred while fetching failed attachment data", e);
-            throw new RuntimeException("Error occurred while fetching failed attachment data", e);
+    public Response getFailedAttachmentData(String id) {
+        try (Response response = documentControllerV1Api.getFailedAttachmentData(id)) {
+            List<StorageUploadAudit> failedAttachmentDataList = response
+                    .readEntity(new GenericType<List<StorageUploadAudit>>() {
+                    });
+            return Response.status(response.getStatus())
+                    .entity(failedAttachmentDataList)
+                    .build();
         }
     }
 
     @Override
-    public File getFile(String attachmentId) {
-        try {
-            return documentControllerV1Api.getFile(attachmentId);
-        } catch (Exception e) {
-            log.error("Error occurred while fetching file", e);
-            throw new RuntimeException("Error occurred while fetching file", e);
+    public Response getFile(String attachmentId) {
+        try (Response response = documentControllerV1Api.getFile(attachmentId)) {
+            return Response.status(response.getStatus())
+                    .entity(response.readEntity(File.class))
+                    .build();
         }
     }
 
     @Override
-    public List<DocumentDetailDTO> showAllDocumentsByCriteria(String channelName, String createdBy, String endDate, String id,
-            String name, String objectReferenceId, String objectReferenceType, Integer page, Integer size, String startDate,
+    public Response showAllDocumentsByCriteria(String channelName, String createdBy, String endDate, String id, String name,
+            String objectReferenceId, String objectReferenceType, Integer page, Integer size, String startDate,
             List<LifeCycleState> state, List<String> typeId) {
-        try {
-            return documentControllerV1Api.showAllDocumentsByCriteria(channelName, createdBy, endDate, id, name,
-                    objectReferenceId,
-                    objectReferenceType,
-                    page, size, startDate, state, typeId);
-        } catch (Exception e) {
-            log.error("Error occurred while fetching all documents by criteria", e);
-            throw new RuntimeException("Error occurred while fetching all documents by criteria", e);
+        try (Response response = documentControllerV1Api.showAllDocumentsByCriteria(channelName, createdBy, endDate, id, name,
+                objectReferenceId, objectReferenceType,
+                page, size, startDate, mapper.mapLifeCycle(state), typeId)) {
+            List<DocumentDetail> documentDetailList = response.readEntity(new GenericType<List<DocumentDetail>>() {
+            });
+            return Response.status(response.getStatus())
+                    .entity(documentDetailList)
+                    .build();
         }
     }
 
     @Override
-    public DocumentDetailDTO updateDocument(String id, DocumentCreateUpdateDTO documentCreateUpdateDTO) {
-        try {
-            return documentControllerV1Api.updateDocument(id, documentCreateUpdateDTO);
-        } catch (Exception e) {
-            log.error("Error occurred while updating document", e);
-            throw new RuntimeException("Error occurred while updating document", e);
+    public Response updateDocument(String id, DocumentCreateUpdate documentCreateUpdate) {
+        try (Response response = documentControllerV1Api.updateDocument(id, mapper.map(documentCreateUpdate))) {
+            return Response.status(response.getStatus())
+                    .entity(response.readEntity(DocumentDetail.class))
+                    .build();
         }
     }
 
     @Override
-    public DocumentResponseDTO uploadAllFiles(UploadAllFilesMultipartForm multipartForm, String documentId) {
-        try {
-            return documentControllerV1Api.uploadAllFiles(multipartForm, documentId);
-        } catch (Exception e) {
-            log.error("Error occurred while uploading all files", e);
-            throw new RuntimeException("Error occurred while uploading all files", e);
+    public Response uploadAllFiles(String documentId, MultipartFormDataInput files) {
+        DocumentControllerV1Api.UploadAllFilesMultipartForm multipart = new DocumentControllerV1Api.UploadAllFilesMultipartForm();
+        multipart.files = files;
+
+        try (Response response = documentControllerV1Api.uploadAllFiles(multipart, documentId)) {
+            return Response.status(response.getStatus())
+                    .entity(response.readEntity(DocumentResponse.class))
+                    .build();
         }
     }
 }

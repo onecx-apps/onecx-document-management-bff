@@ -167,7 +167,7 @@
                     <generatorName>jaxrs-spec</generatorName>
                     <apiNameSuffix>ApiService</apiNameSuffix>
                     <generateApiTests>false</generateApiTests>
-                    <modelNameSuffix>DTO</modelNameSuffix>
+                    <modelNameSuffix></modelNameSuffix>
                     <generateApiDocumentation>false</generateApiDocumentation>
                     <generateModelTests>false</generateModelTests>
                     <generateModelDocumentation>false</generateModelDocumentation>
@@ -204,13 +204,14 @@
                     <execution>
                         <phase>generate-resources</phase>
                         <id>document-mgmt-svc-internal</id>
-                                                <goals>
-                                                    <goal>wget</goal>
-                                                </goals>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
                         <configuration>
-<!--                            <url>https://github.com/onecx-apps/onecx-document-management-svc/blob/main/src/main/openapi/document-management-svc.yaml</url>-->
+                            <!--                            <url>https://github.com/onecx-apps/onecx-document-management-svc/blob/main/src/main/openapi/document-management-svc.yaml</url>-->
                             <url>
-                                https://raw.githubusercontent.com/onecx-apps/onecx-document-management-svc/main/src/main/openapi/document-management-svc.yaml
+                                <!--                                https://raw.githubusercontent.com/onecx-apps/onecx-document-management-svc/main/src/main/openapi/document-management-svc.yaml-->
+                                https://raw.githubusercontent.com/ASPRADHA/onecx-document-management-bff/refs/heads/quarkus3-upgrade/src/main/openapi/document-management-svc.yaml
                             </url>
                             <outputDirectory>target/tmp/openapi</outputDirectory>
                             <outputFileName>onecx-document-management-svc.yaml</outputFileName>

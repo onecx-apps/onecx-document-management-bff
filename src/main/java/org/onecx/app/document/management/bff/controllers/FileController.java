@@ -9,52 +9,45 @@ import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import gen.org.tkit.onecx.document_management.client.api.FileControllerV1Api;
+import gen.org.tkit.onecx.document_management.rs.internal.FileControllerV1ApiService;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @ApplicationScoped
-public class FileController implements FileControllerV1Api {
+public class FileController implements FileControllerV1ApiService {
     @Inject
     @RestClient
     FileControllerV1Api fileControllerV1Api;
 
     @Override
     public Response createBucket(String name) {
-        try {
-            return fileControllerV1Api.createBucket(name);
-        } catch (Exception e) {
-            log.error("Error occurred while creating bucket", e);
-            throw new RuntimeException("Error occurred while creating bucket", e);
+        try (Response response = fileControllerV1Api.createBucket(name)) {
+            return response;
         }
     }
 
     @Override
     public Response deleteFile(String bucket, String path) {
-        try {
-            return fileControllerV1Api.deleteFile(bucket, path);
-        } catch (Exception e) {
-            log.error("Error occurred while deleting file", e);
-            throw new RuntimeException("Error occurred while deleting file", e);
+        try (Response response = fileControllerV1Api.deleteFile(bucket, path)) {
+            return response;
         }
     }
 
     @Override
-    public File downloadFile(String bucket, String path) {
-        try {
-            return fileControllerV1Api.downloadFile(bucket, path);
-        } catch (Exception e) {
-            log.error("Error occurred while downloading file", e);
-            throw new RuntimeException("Error occurred while downloading file", e);
+    public Response downloadFile(String bucket, String path) {
+        try (Response response = fileControllerV1Api.downloadFile(bucket, path)) {
+            return Response.status(response.getStatus())
+                    .entity(response.readEntity(File.class))
+                    .build();
         }
     }
 
     @Override
-    public Response uploadFile(UploadFileMultipartForm multipartForm, String bucket, String path) {
-        try {
-            return fileControllerV1Api.uploadFile(multipartForm, bucket, path);
-        } catch (Exception e) {
-            log.error("Error occurred while uploading file", e);
-            throw new RuntimeException("Error occurred while uploading file", e);
+    public Response uploadFile(String bucket, String path, File _file) {
+        FileControllerV1Api.UploadFileMultipartForm multi = new FileControllerV1Api.UploadFileMultipartForm();
+        multi._file = _file;
+        try (Response response = fileControllerV1Api.uploadFile(multi, bucket, path)) {
+            return response;
         }
     }
 }
