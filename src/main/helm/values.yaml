@@ -4,6 +4,16 @@ app:
     tag: 999-SNAPSHOT
   operator:
     # Permission
+    permission:
+      enabled: true
+      spec:
+        permissions:
+          help:
+            read: permission on all GET requests and POST search
+            write: permission on PUT, POST, PATCH requests, where objects are saved or updated
+            delete: permission on all DELETE requests
+          product:
+            read: permission on all GET requests and POST search
     keycloak:
       client:
         enabled: true
