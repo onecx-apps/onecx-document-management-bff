@@ -13,8 +13,8 @@ import org.onecx.app.document.management.bff.mappers.DocumentMapper;
 
 import gen.org.tkit.onecx.document_management.client.api.DocumentTypeControllerV1Api;
 import gen.org.tkit.onecx.document_management.rs.internal.DocumentTypeControllerV1ApiService;
-import gen.org.tkit.onecx.document_management.rs.internal.model.DocumentType;
-import gen.org.tkit.onecx.document_management.rs.internal.model.DocumentTypeCreateUpdate;
+import gen.org.tkit.onecx.document_management.rs.internal.model.DocumentTypeCreateUpdateDTO;
+import gen.org.tkit.onecx.document_management.rs.internal.model.DocumentTypeDTO;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -28,10 +28,10 @@ public class DocumentTypeController implements DocumentTypeControllerV1ApiServic
     DocumentMapper mapper;
 
     @Override
-    public Response createDocumentType(DocumentTypeCreateUpdate documentTypeCreateUpdate) {
-        try (Response response = documentTypeControllerV1Api.createDocumentType(mapper.map(documentTypeCreateUpdate))) {
+    public Response createDocumentType(DocumentTypeCreateUpdateDTO documentTypeCreateUpdateDTO) {
+        try (Response response = documentTypeControllerV1Api.createDocumentType(mapper.map(documentTypeCreateUpdateDTO))) {
             return Response.status(response.getStatus())
-                    .entity(response.readEntity(DocumentType.class))
+                    .entity(mapper.mapDocumentType(response.readEntity(DocumentTypeDTO.class)))
                     .build();
         }
     }
@@ -39,17 +39,17 @@ public class DocumentTypeController implements DocumentTypeControllerV1ApiServic
     @Override
     public Response deleteDocumentTypeById(String id) {
         try (Response response = documentTypeControllerV1Api.deleteDocumentTypeById(id)) {
-            return response;
+            return Response.status(response.getStatus()).build();
         }
     }
 
     @Override
     public Response getAllTypesOfDocument() {
         try (Response response = documentTypeControllerV1Api.getAllTypesOfDocument()) {
-            List<DocumentType> documentTypeList = response.readEntity(new GenericType<List<DocumentType>>() {
+            List<DocumentTypeDTO> documentTypeList = response.readEntity(new GenericType<List<DocumentTypeDTO>>() {
             });
             return Response.status(response.getStatus())
-                    .entity(documentTypeList)
+                    .entity(mapper.mapType(documentTypeList))
                     .build();
         }
     }
@@ -58,17 +58,17 @@ public class DocumentTypeController implements DocumentTypeControllerV1ApiServic
     public Response getDocumentTypeById(String id) {
         try (Response response = documentTypeControllerV1Api.getDocumentTypeById(id)) {
             return Response.status(response.getStatus())
-                    .entity(response.readEntity(DocumentType.class))
+                    .entity(mapper.mapDocumentType(response.readEntity(DocumentTypeDTO.class)))
                     .build();
         }
     }
 
     @Override
-    public Response updateDocumentTypeById(String id, DocumentTypeCreateUpdate documentTypeCreateUpdate) {
+    public Response updateDocumentTypeById(String id, DocumentTypeCreateUpdateDTO documentTypeCreateUpdateDTO) {
         try (Response response = documentTypeControllerV1Api.updateDocumentTypeById(id,
-                mapper.map(documentTypeCreateUpdate))) {
+                mapper.map(documentTypeCreateUpdateDTO))) {
             return Response.status(response.getStatus())
-                    .entity(response.readEntity(DocumentType.class))
+                    .entity(mapper.mapDocumentType(response.readEntity(DocumentTypeDTO.class)))
                     .build();
         }
     }

@@ -29,19 +29,19 @@ public class DocumentController implements DocumentControllerV1ApiService {
     DocumentMapper mapper;
 
     @Override
-    public Response bulkUpdateDocument(List<DocumentCreateUpdate> documentCreateUpdate) {
-        try (Response response = documentControllerV1Api.bulkUpdateDocument(mapper.map(documentCreateUpdate))) {
+    public Response bulkUpdateDocument(List<DocumentCreateUpdateDTO> documentCreateUpdateDTOS) {
+        try (Response response = documentControllerV1Api.bulkUpdateDocument(mapper.map(documentCreateUpdateDTOS))) {
             return Response.status(response.getStatus())
-                    .entity(response.readEntity(DocumentDetail.class))
+                    .entity(mapper.map(response.readEntity(DocumentDetailDTO.class)))
                     .build();
         }
     }
 
     @Override
-    public Response createDocument(DocumentCreateUpdate documentCreateUpdate) {
-        try (Response response = documentControllerV1Api.createDocument(mapper.map(documentCreateUpdate))) {
+    public Response createDocument(DocumentCreateUpdateDTO documentCreateUpdateDTO) {
+        try (Response response = documentControllerV1Api.createDocument(mapper.map(documentCreateUpdateDTO))) {
             return Response.status(response.getStatus())
-                    .entity(response.readEntity(DocumentDetail.class))
+                    .entity(mapper.map(response.readEntity(DocumentDetailDTO.class)))
                     .build();
         }
     }
@@ -70,10 +70,9 @@ public class DocumentController implements DocumentControllerV1ApiService {
     @Override
     public Response getAllChannels() {
         try (Response response = documentControllerV1Api.getAllChannels()) {
-            List<Channel> channelList = response.readEntity(new GenericType<List<Channel>>() {
-            });
             return Response.status(response.getStatus())
-                    .entity(channelList)
+                    .entity(mapper.mapChannel(response.readEntity(new GenericType<List<ChannelDTO>>() {
+                    })))
                     .build();
         }
     }
@@ -90,13 +89,12 @@ public class DocumentController implements DocumentControllerV1ApiService {
     @Override
     public Response getDocumentByCriteria(String channelName, String createdBy, String endDate, String id, String name,
             String objectReferenceId, String objectReferenceType, Integer page, Integer size, String startDate,
-            List<LifeCycleState> state, List<String> typeId) {
+            List<LifeCycleStateDTO> state, List<String> typeId) {
         try (Response response = documentControllerV1Api.getDocumentByCriteria(channelName, createdBy, endDate, id, name,
                 objectReferenceId, objectReferenceType, page,
                 size, startDate, mapper.mapLifeCycle(state), typeId)) {
-            PageResult entity = response.readEntity(PageResult.class);
             return Response.status(response.getStatus())
-                    .entity(response.readEntity(PageResult.class))
+                    .entity(mapper.map(response.readEntity(PageResultDTO.class)))
                     .build();
         }
     }
@@ -104,8 +102,9 @@ public class DocumentController implements DocumentControllerV1ApiService {
     @Override
     public Response getDocumentById(String id) {
         try (Response response = documentControllerV1Api.getDocumentById(id)) {
+            DocumentDetailDTO detailDTO = response.readEntity(DocumentDetailDTO.class);
             return Response.status(response.getStatus())
-                    .entity(response.readEntity(DocumentDetail.class))
+                    .entity(mapper.map(detailDTO))
                     .build();
         }
     }
@@ -113,11 +112,10 @@ public class DocumentController implements DocumentControllerV1ApiService {
     @Override
     public Response getFailedAttachmentData(String id) {
         try (Response response = documentControllerV1Api.getFailedAttachmentData(id)) {
-            List<StorageUploadAudit> failedAttachmentDataList = response
-                    .readEntity(new GenericType<List<StorageUploadAudit>>() {
-                    });
             return Response.status(response.getStatus())
-                    .entity(failedAttachmentDataList)
+                    .entity(mapper.mapAuditList(response
+                            .readEntity(new GenericType<List<StorageUploadAuditDTO>>() {
+                            })))
                     .build();
         }
     }
@@ -134,23 +132,22 @@ public class DocumentController implements DocumentControllerV1ApiService {
     @Override
     public Response showAllDocumentsByCriteria(String channelName, String createdBy, String endDate, String id, String name,
             String objectReferenceId, String objectReferenceType, Integer page, Integer size, String startDate,
-            List<LifeCycleState> state, List<String> typeId) {
+            List<LifeCycleStateDTO> state, List<String> typeId) {
         try (Response response = documentControllerV1Api.showAllDocumentsByCriteria(channelName, createdBy, endDate, id, name,
                 objectReferenceId, objectReferenceType,
                 page, size, startDate, mapper.mapLifeCycle(state), typeId)) {
-            List<DocumentDetail> documentDetailList = response.readEntity(new GenericType<List<DocumentDetail>>() {
-            });
             return Response.status(response.getStatus())
-                    .entity(documentDetailList)
+                    .entity(mapper.mapDetailList(response.readEntity(new GenericType<List<DocumentDetailDTO>>() {
+                    })))
                     .build();
         }
     }
 
     @Override
-    public Response updateDocument(String id, DocumentCreateUpdate documentCreateUpdate) {
-        try (Response response = documentControllerV1Api.updateDocument(id, mapper.map(documentCreateUpdate))) {
+    public Response updateDocument(String id, DocumentCreateUpdateDTO documentCreateUpdateDTO) {
+        try (Response response = documentControllerV1Api.updateDocument(id, mapper.map(documentCreateUpdateDTO))) {
             return Response.status(response.getStatus())
-                    .entity(response.readEntity(DocumentDetail.class))
+                    .entity(mapper.map(response.readEntity(DocumentDetailDTO.class)))
                     .build();
         }
     }
@@ -162,7 +159,7 @@ public class DocumentController implements DocumentControllerV1ApiService {
 
         try (Response response = documentControllerV1Api.uploadAllFiles(multipart, documentId)) {
             return Response.status(response.getStatus())
-                    .entity(response.readEntity(DocumentResponse.class))
+                    .entity(mapper.map(response.readEntity(DocumentResponseDTO.class)))
                     .build();
         }
     }

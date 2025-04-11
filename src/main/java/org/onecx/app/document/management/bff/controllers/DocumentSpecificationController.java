@@ -13,8 +13,8 @@ import org.onecx.app.document.management.bff.mappers.DocumentMapper;
 
 import gen.org.tkit.onecx.document_management.client.api.DocumentSpecificationControllerV1Api;
 import gen.org.tkit.onecx.document_management.rs.internal.DocumentSpecificationControllerV1ApiService;
-import gen.org.tkit.onecx.document_management.rs.internal.model.DocumentSpecification;
-import gen.org.tkit.onecx.document_management.rs.internal.model.DocumentSpecificationCreateUpdate;
+import gen.org.tkit.onecx.document_management.rs.internal.model.DocumentSpecificationCreateUpdateDTO;
+import gen.org.tkit.onecx.document_management.rs.internal.model.DocumentSpecificationDTO;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -28,11 +28,11 @@ public class DocumentSpecificationController implements DocumentSpecificationCon
     DocumentMapper mapper;
 
     @Override
-    public Response createDocumentSpecification(DocumentSpecificationCreateUpdate documentSpecificationCreateUpdate) {
+    public Response createDocumentSpecification(DocumentSpecificationCreateUpdateDTO documentSpecificationCreateUpdateDTO) {
         try (Response response = documentSpecificationControllerV1Api
-                .createDocumentSpecification(mapper.map(documentSpecificationCreateUpdate))) {
+                .createDocumentSpecification(mapper.map(documentSpecificationCreateUpdateDTO))) {
             return Response.status(response.getStatus())
-                    .entity(response.readEntity(DocumentSpecification.class))
+                    .entity(mapper.map(response.readEntity(DocumentSpecificationDTO.class)))
                     .build();
         }
     }
@@ -40,18 +40,18 @@ public class DocumentSpecificationController implements DocumentSpecificationCon
     @Override
     public Response deleteDocumentSpecificationById(String id) {
         try (Response response = documentSpecificationControllerV1Api.deleteDocumentSpecificationById(id)) {
-            return response;
+            return Response.status(response.getStatus()).build();
         }
     }
 
     @Override
     public Response getAllDocumentSpecifications() {
         try (Response response = documentSpecificationControllerV1Api.getAllDocumentSpecifications()) {
-            List<DocumentSpecification> documentSpecificationList = response
-                    .readEntity(new GenericType<List<DocumentSpecification>>() {
+            List<DocumentSpecificationDTO> documentSpecificationList = response
+                    .readEntity(new GenericType<List<DocumentSpecificationDTO>>() {
                     });
             return Response.status(response.getStatus())
-                    .entity(documentSpecificationList)
+                    .entity(mapper.mapSpecification(documentSpecificationList))
                     .build();
         }
     }
@@ -60,18 +60,18 @@ public class DocumentSpecificationController implements DocumentSpecificationCon
     public Response getDocumentSpecificationById(String id) {
         try (Response response = documentSpecificationControllerV1Api.getDocumentSpecificationById(id)) {
             return Response.status(response.getStatus())
-                    .entity(response.readEntity(DocumentSpecification.class))
+                    .entity(mapper.map(response.readEntity(DocumentSpecificationDTO.class)))
                     .build();
         }
     }
 
     @Override
     public Response updateDocumentSpecificationById(String id,
-            DocumentSpecificationCreateUpdate documentSpecificationCreateUpdate) {
+            DocumentSpecificationCreateUpdateDTO documentSpecificationCreateUpdateDTO) {
         try (Response response = documentSpecificationControllerV1Api.updateDocumentSpecificationById(id,
-                mapper.map(documentSpecificationCreateUpdate))) {
+                mapper.map(documentSpecificationCreateUpdateDTO))) {
             return Response.status(response.getStatus())
-                    .entity(response.readEntity(DocumentSpecification.class))
+                    .entity(mapper.map(response.readEntity(DocumentSpecificationDTO.class)))
                     .build();
         }
     }

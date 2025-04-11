@@ -6,30 +6,52 @@ import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import gen.org.tkit.onecx.document_management.client.model.*;
 import gen.org.tkit.onecx.document_management.rs.internal.model.*;
 
 @Mapper
 public interface DocumentMapper {
-    gen.org.tkit.onecx.document_management.client.model.DocumentCreateUpdate map(DocumentCreateUpdate documentCreateUpdate);
+    DocumentCreateUpdate map(DocumentCreateUpdateDTO documentCreateUpdateDTO);
 
-    List<gen.org.tkit.onecx.document_management.client.model.DocumentCreateUpdate> map(
-            List<DocumentCreateUpdate> documentCreateUpdate);
+    List<DocumentCreateUpdate> map(List<DocumentCreateUpdateDTO> documentCreateUpdateDTO);
 
     @Mapping(target = "_file", ignore = true)
-    gen.org.tkit.onecx.document_management.client.model.AttachmentCreateUpdate map(
-            AttachmentCreateUpdate attachmentCreateUpdate);
+    AttachmentCreateUpdate map(AttachmentCreateUpdateDTO attachmentCreateUpdateDTO);
 
-    gen.org.tkit.onecx.document_management.client.model.LifeCycleState map(LifeCycleState lifeCycleState);
+    LifeCycleState map(LifeCycleStateDTO lifeCycleStateDTO);
 
-    List<gen.org.tkit.onecx.document_management.client.model.LifeCycleState> mapLifeCycle(List<LifeCycleState> lifeCycleState);
+    List<LifeCycleState> mapLifeCycle(List<LifeCycleStateDTO> lifeCycleStateDTO);
 
-    gen.org.tkit.onecx.document_management.client.model.DocumentSpecificationCreateUpdate map(
-            DocumentSpecificationCreateUpdate documentSpecificationCreateUpdate);
+    DocumentSpecificationCreateUpdate map(DocumentSpecificationCreateUpdateDTO documentSpecificationCreateUpdateDTO);
 
-    gen.org.tkit.onecx.document_management.client.model.DocumentTypeCreateUpdate map(
-            DocumentTypeCreateUpdate documentTypeCreateUpdate);
+    DocumentTypeCreateUpdate map(DocumentTypeCreateUpdateDTO documentTypeCreateUpdateDTO);
 
-    gen.org.tkit.onecx.document_management.client.model.SupportedMimeTypeCreateUpdate map(
-            SupportedMimeTypeCreateUpdate supportedMimeTypeCreateUpdate);
+    SupportedMimeType map(SupportedMimeTypeDTO supportedMimeTypeDTO);
+
+    List<SupportedMimeType> mapMimeTypeList(List<SupportedMimeTypeDTO> supportedMimeTypeDTOS);
+
+    SupportedMimeTypeCreateUpdate map(SupportedMimeTypeCreateUpdateDTO supportedMimeTypeCreateUpdateDTO);
+
+    DocumentDetail map(DocumentDetailDTO documentDetailDTO);
+
+    List<DocumentDetail> mapDetailList(List<DocumentDetailDTO> documentDetailDTOList);
+
+    PageResult map(PageResultDTO pageResultDTO);
+
+    Channel map(ChannelDTO channelDTO);
+
+    List<Channel> mapChannel(List<ChannelDTO> channelDTOS);
+
+    List<StorageUploadAudit> mapAuditList(List<StorageUploadAuditDTO> storageUploadAuditDTOS);
+
+    DocumentResponse map(DocumentResponseDTO documentResponseDTO);
+
+    DocumentSpecification map(DocumentSpecificationDTO documentSpecificationDTO);
+
+    List<DocumentSpecification> mapSpecification(List<DocumentSpecificationDTO> documentSpecificationDTOS);
+
+    List<DocumentType> mapType(List<DocumentTypeDTO> documentTypeDTOS);
+
+    DocumentType mapDocumentType(DocumentTypeDTO documentTypeDTO);
 
 }

@@ -14,6 +14,10 @@ tags:
 paths:
   /v1/document:
     get:
+      x-onecx:
+        permissions:
+          document:
+            - read
       tags:
         - DocumentControllerV1
       description: Gets documents by criteria
@@ -92,6 +96,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/RFCProblem'
     post:
+      x-onecx:
+        permissions:
+          document:
+            - write
       tags:
         - DocumentControllerV1
       description: Create Document
@@ -122,6 +130,10 @@ paths:
                 $ref: '#/components/schemas/RFCProblem'
   /v1/document-specification:
     get:
+      x-onecx:
+        permissions:
+          document:
+            - read
       tags:
         - DocumentSpecificationControllerV1
       description: Finds all specification of documents
@@ -142,6 +154,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/RFCProblem'
     post:
+      x-onecx:
+        permissions:
+          document:
+            - write
       tags:
         - DocumentSpecificationControllerV1
       description: Creates specification of document
@@ -166,6 +182,10 @@ paths:
                 $ref: '#/components/schemas/RFCProblem'
   /v1/document-specification/{id}:
     get:
+      x-onecx:
+        permissions:
+          document:
+            - read
       tags:
         - DocumentSpecificationControllerV1
       description: Gets document specification by id
@@ -190,6 +210,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/RFCProblem'
     put:
+      x-onecx:
+        permissions:
+          document:
+            - write
       tags:
         - DocumentSpecificationControllerV1
       description: Updates specification of document by id
@@ -219,6 +243,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/RFCProblem'
     delete:
+      x-onecx:
+        permissions:
+          document:
+            - delete
       tags:
         - DocumentSpecificationControllerV1
       description: Deletes specification of document by id
@@ -246,6 +274,10 @@ paths:
                 $ref: '#/components/schemas/RFCProblem'
   /v1/document-type:
     get:
+      x-onecx:
+        permissions:
+          document:
+            - read
       tags:
         - DocumentTypeControllerV1
       description: Finds all types of document
@@ -266,6 +298,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/RFCProblem'
     post:
+      x-onecx:
+        permissions:
+          document:
+            - write
       tags:
         - DocumentTypeControllerV1
       description: Creates type of document
@@ -290,6 +326,10 @@ paths:
                 $ref: '#/components/schemas/RFCProblem'
   /v1/document-type/{id}:
     get:
+      x-onecx:
+        permissions:
+          document:
+            - read
       tags:
         - DocumentTypeControllerV1
       description: Gets document type by id
@@ -314,6 +354,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/RFCProblem'
     put:
+      x-onecx:
+        permissions:
+          document:
+            - write
       tags:
         - DocumentTypeControllerV1
       description: Updates type of document by id
@@ -343,6 +387,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/RFCProblem'
     delete:
+      x-onecx:
+        permissions:
+          document:
+            - delete
       tags:
         - DocumentTypeControllerV1
       description: Deletes type of document by id
@@ -370,6 +418,10 @@ paths:
                 $ref: '#/components/schemas/RFCProblem'
   /v1/document/bulkupdate:
     put:
+      x-onecx:
+        permissions:
+          document:
+            - write
       tags:
         - DocumentControllerV1
       description: Bulk Update an document
@@ -398,6 +450,10 @@ paths:
                 $ref: '#/components/schemas/RFCProblem'
   /v1/document/channels:
     get:
+      x-onecx:
+        permissions:
+          document:
+            - read
       tags:
         - DocumentControllerV1
       description: Gets all channels
@@ -413,6 +469,10 @@ paths:
                   $ref: '#/components/schemas/Channel'
   /v1/document/delete-bulk-documents:
     delete:
+      x-onecx:
+        permissions:
+          document:
+            - delete
       tags:
         - DocumentControllerV1
       description: Delete Multiple Document by Ids
@@ -435,6 +495,10 @@ paths:
                 $ref: '#/components/schemas/RFCProblem'
   /v1/document/file/delete-bulk-attachment:
     delete:
+      x-onecx:
+        permissions:
+          document:
+            - delete
       tags:
         - DocumentControllerV1
       description: Delete attachment's files in bulk
@@ -453,6 +517,10 @@ paths:
           description: Not found
   /v1/document/file/{attachmentId}:
     get:
+      x-onecx:
+        permissions:
+          document:
+            - read
       tags:
         - DocumentControllerV1
       description: Get attachment's file
@@ -475,6 +543,10 @@ paths:
           description: Not found
   /v1/document/file/{documentId}/attachments:
     get:
+      x-onecx:
+        permissions:
+          document:
+            - read
       tags:
         - DocumentControllerV1
       description: Get all the attachments of the document packaged in a zip file
@@ -503,6 +575,10 @@ paths:
           description: No content
   /v1/document/files/upload/failed/{id}:
     get:
+      x-onecx:
+        permissions:
+          document:
+            - read
       tags:
         - DocumentControllerV1
       description: Get data of all the failed attachment based on document ID
@@ -530,6 +606,10 @@ paths:
                 $ref: '#/components/schemas/RFCProblem'
   /v1/document/show-all-documents:
     get:
+      x-onecx:
+        permissions:
+          document:
+            - read
       tags:
         - DocumentControllerV1
       description: Gets all documents by criteria
@@ -611,6 +691,10 @@ paths:
                 $ref: '#/components/schemas/RFCProblem'
   /v1/document/{id}:
     get:
+      x-onecx:
+        permissions:
+          document:
+            - read
       tags:
         - DocumentControllerV1
       description: Gets Document by Id
@@ -635,6 +719,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/RFCProblem'
     put:
+      x-onecx:
+        permissions:
+          document:
+            - write
       tags:
         - DocumentControllerV1
       description: Update an document
@@ -664,6 +752,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/RFCProblem'
     delete:
+      x-onecx:
+        permissions:
+          document:
+            - delete
       tags:
         - DocumentControllerV1
       description: Delete Document by Id
@@ -685,6 +777,10 @@ paths:
                 $ref: '#/components/schemas/RFCProblem'
   /v1/files/bucket/{name}:
     post:
+      x-onecx:
+        permissions:
+          document:
+            - write
       tags:
         - FileControllerV1
       summary: Creates a bucket with the given name
@@ -703,6 +799,10 @@ paths:
           description: Bad request
   /v1/files/{bucket}/{path}:
     get:
+      x-onecx:
+        permissions:
+          document:
+            - read
       tags:
         - FileControllerV1
       summary: Download file contents
@@ -730,6 +830,10 @@ paths:
         "404":
           description: Not found
     put:
+      x-onecx:
+        permissions:
+          document:
+            - write
       tags:
         - FileControllerV1
       summary: Uploads a file to the given location
@@ -758,6 +862,10 @@ paths:
         "400":
           description: Bad request
     delete:
+      x-onecx:
+        permissions:
+          document:
+            - delete
       tags:
         - FileControllerV1
       summary: Deletes the file from Minio object storage
@@ -782,6 +890,10 @@ paths:
           description: Not Found
   /v1/supported-mime-type:
     get:
+      x-onecx:
+        permissions:
+          document:
+            - read
       tags:
         - SupportedMimeTypeControllerV1
       description: Finds all supported mime-types
@@ -802,6 +914,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/RFCProblem'
     post:
+      x-onecx:
+        permissions:
+          document:
+            - write
       tags:
         - SupportedMimeTypeControllerV1
       description: Creates supported mime-type
@@ -826,6 +942,10 @@ paths:
                 $ref: '#/components/schemas/RFCProblem'
   /v1/supported-mime-type/{id}:
     get:
+      x-onecx:
+        permissions:
+          document:
+            - read
       tags:
         - SupportedMimeTypeControllerV1
       description: Gets supported mime-type by id
@@ -850,6 +970,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/RFCProblem'
     put:
+      x-onecx:
+        permissions:
+          document:
+            - write
       tags:
         - SupportedMimeTypeControllerV1
       description: Updates supported mime-type by id
@@ -879,6 +1003,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/RFCProblem'
     delete:
+      x-onecx:
+        permissions:
+          document:
+            - delete
       tags:
         - SupportedMimeTypeControllerV1
       description: Deletes supported mime-type by id
@@ -906,6 +1034,10 @@ paths:
                 $ref: '#/components/schemas/RFCProblem'
   /v1/document/files/upload/{documentId}:
     post:
+      x-onecx:
+        permissions:
+          document:
+            - write
       tags:
         - DocumentControllerV1
       operationId: uploadAllFiles

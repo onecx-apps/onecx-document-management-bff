@@ -22,14 +22,14 @@ public class FileController implements FileControllerV1ApiService {
     @Override
     public Response createBucket(String name) {
         try (Response response = fileControllerV1Api.createBucket(name)) {
-            return response;
+            return Response.status(response.getStatus()).build();
         }
     }
 
     @Override
     public Response deleteFile(String bucket, String path) {
         try (Response response = fileControllerV1Api.deleteFile(bucket, path)) {
-            return response;
+            return Response.status(response.getStatus()).build();
         }
     }
 
@@ -47,7 +47,7 @@ public class FileController implements FileControllerV1ApiService {
         FileControllerV1Api.UploadFileMultipartForm multi = new FileControllerV1Api.UploadFileMultipartForm();
         multi._file = _file;
         try (Response response = fileControllerV1Api.uploadFile(multi, bucket, path)) {
-            return response;
+            return Response.status(response.getStatus()).build();
         }
     }
 }
