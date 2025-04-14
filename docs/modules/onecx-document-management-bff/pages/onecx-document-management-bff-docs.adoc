@@ -1,3 +1,13 @@
+
+include::onecx-document-management-bff-attributes.adoc[opts=optional]
+
+=== Default properties
+
+.{properties-file}
+[%collapsible%open]
+====
+[source,properties,subs=attributes+]
+----
 documentmgmt/mp-rest/url=http://onecx-document-management-svc:8080
 documentmgmt/mp-rest/forward-headers=true
 apm/mp-rest/url=http://tkit-apm:8080/tkit-apm-rs/v2
@@ -6,46 +16,17 @@ portalLaunchpad/mp-rest/url=http://portal-launchpad:8080
 tkitPortalServer/mp-rest/url=http://tkit-portal-server:8080
 mp.openapi.scan.disable=false
 tkit.log.json.enabled=false
-#org.eclipse.microprofile.rest.client.propagateHeaders=Authorization
 org.eclipse.microprofile.rest.client.propagateHeaders=apm-principal-token
 quarkus.oidc-client.client-id=${quarkus.application.name}
-
-# jwt configuration
 smallrye.jwt.path.groups =realm_access/roles
-
 quarkus.http.limits.max-body-size=20240K
 dms.file-upload.proxy-path=/v1/document/files/upload/*
-# AUTHENTICATION
 quarkus.http.auth.permission.health.paths=/q/*
 quarkus.http.auth.permission.health.policy=permit
 quarkus.http.auth.permission.default.paths=/*
 quarkus.http.auth.permission.default.policy=authenticated
 onecx.permissions.application-id=${quarkus.application.name}
-%test.onecx.permissions.product-name=applications
-#quarkus.rest-client.onecx_document_svc.url = http://onecx-onecx_document_management_svc_yaml:8080
 quarkus.rest-client.onecx_document_svc.url = http://onecx-document-management-svc:8080
-# DEV
-%dev.quarkus.tkit.log.console.json=false
-#%dev.keycloak.admin.username=onecx
-#%dev.keycloak.admin.password=onecx
-#%dev.keycloak.realm=OneCX
-#%dev.keycloak.clientId=onecx-document-management-ui
-%dev.quarkus.http.port=8084
-%dev.quarkus.http.host=0.0.0.0
-%dev.documentmgmt/mp-rest/url=http://localhost:8080
-%dev.documentmgmt/mp-rest/forward-headers=true
-%dev.ahm/mp-rest/url=http://localhost:8083
-%dev.portalLaunchpad/mp-rest/url=http://localhost:8082
-%dev.tkitPortalServer/mp-rest/url=http://localhost:8081
-%dev.apm/mp-rest/url=http://localhost:8083/tkit-apm-rs/v2
-#%dev.mp.jwt.verify.issuer=http://keycloak-app/realms/OneCX
-#%dev.mp.jwt.verify.publickey.location=http://keycloak-app/realms/OneCX/protocol/openid-connect/certs
-%dev.dms.file-upload.proxy-path=/v1/document/files/upload/*
-%dev.quarkus.rest-client.onecx_document_svc.url = http://localhost:8080
-# if problem with starting application, change the port number
-
-# BUILD
-
 quarkus.openapi-generator.codegen.spec.onecx_document_management_svc_yaml.config-key=onecx_document_svc
 quarkus.openapi-generator.codegen.spec.onecx_document_management_svc_yaml.base-package=gen.org.tkit.onecx.document-management.client
 quarkus.openapi-generator.codegen.spec.onecx_document_management_svc_yaml.return-response=true
@@ -58,3 +39,75 @@ quarkus.openapi-generator.codegen.spec.onecx_document_management_svc_yaml.import
 quarkus.openapi-generator.codegen.spec.onecx_document_management_svc_yaml.type-mappings.File=java.io.File
 quarkus.openapi-generator.codegen.spec.onecx_document_management_svc_yaml.type-mappings.MultipartFormDataInput=org.jboss.resteasy.reactive.server.multipart.MultipartFormDataInput
 quarkus.rest-client.onecx_document_svc.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter
+----
+====
+
+=== Extensions
+
+include::onecx-document-management-bff-extensions.adoc[opts=optional]
+
+=== Container
+
+{docker-registry}[Docker registry]
+
+
+=== Helm
+
+{helm-registry}[Helm registry]
+
+Default values
+
+.{helm-file}
+[source,yaml]
+----
+app:
+  image:
+    repository: "onecx-apps/onecx-document-management-bff"
+    tag: 999-SNAPSHOT
+  operator:
+    # Permission
+    permission:
+      enabled: true
+      spec:
+        permissions:
+          document:
+            read: permission on all GET requests and POST search
+            write: permission on PUT, POST, PATCH requests, where objects are saved or updated
+            delete: permission on all DELETE requests
+    keycloak:
+      client:
+        enabled: true
+        spec:
+          kcConfig:
+            defaultClientScopes: [ ocx-doc:all, ocx-doc:read, ocx-doc:write, ocx-pm:read ]
+  product: false
+
+----
+
+ocx-doc:all, ocx-doc:read, ocx-doc:write, ocx-pm:read ]
+  product: false
+
+----
+
+ient:
+        enabled: true
+        spec:
+          kcConfig:
+            defaultClientScopes: [ ocx-doc:all, ocx-doc:read, ocx-doc:write ]
+
+  product: false
+
+----
+
+   #            read: permission on all GET requests and POST search
+    keycloak:
+      client:
+        enabled: true
+        spec:
+          kcConfig:
+            defaultClientScopes: [ ocx-doc:all, ocx-doc:read, ocx-doc:write ]
+
+  product: false
+
+----
+
