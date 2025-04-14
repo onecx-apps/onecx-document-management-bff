@@ -12,7 +12,7 @@ tags:
   - name: SupportedMimeTypeControllerV1
 
 paths:
-  /v1/document:
+  /document:
     get:
       x-onecx:
         permissions:
@@ -128,7 +128,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RFCProblem'
-  /v1/document-specification:
+  /document-specification:
     get:
       x-onecx:
         permissions:
@@ -180,7 +180,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RFCProblem'
-  /v1/document-specification/{id}:
+  /document-specification/{id}:
     get:
       x-onecx:
         permissions:
@@ -272,7 +272,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RFCProblem'
-  /v1/document-type:
+  /document-type:
     get:
       x-onecx:
         permissions:
@@ -324,7 +324,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RFCProblem'
-  /v1/document-type/{id}:
+  /document-type/{id}:
     get:
       x-onecx:
         permissions:
@@ -416,7 +416,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RFCProblem'
-  /v1/document/bulkupdate:
+  /document/bulkupdate:
     put:
       x-onecx:
         permissions:
@@ -448,7 +448,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RFCProblem'
-  /v1/document/channels:
+  /document/channels:
     get:
       x-onecx:
         permissions:
@@ -467,7 +467,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Channel'
-  /v1/document/delete-bulk-documents:
+  /document/delete-bulk-documents:
     delete:
       x-onecx:
         permissions:
@@ -493,7 +493,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RFCProblem'
-  /v1/document/file/delete-bulk-attachment:
+  /document/file/delete-bulk-attachment:
     delete:
       x-onecx:
         permissions:
@@ -515,7 +515,7 @@ paths:
           description: No Content
         "404":
           description: Not found
-  /v1/document/file/{attachmentId}:
+  /document/file/{attachmentId}:
     get:
       x-onecx:
         permissions:
@@ -541,7 +541,7 @@ paths:
                 type: string
         "404":
           description: Not found
-  /v1/document/file/{documentId}/attachments:
+  /document/file/{documentId}/attachments:
     get:
       x-onecx:
         permissions:
@@ -573,7 +573,7 @@ paths:
           description: Bad request
         "204":
           description: No content
-  /v1/document/files/upload/failed/{id}:
+  /document/files/upload/failed/{id}:
     get:
       x-onecx:
         permissions:
@@ -604,7 +604,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RFCProblem'
-  /v1/document/show-all-documents:
+  /document/show-all-documents:
     get:
       x-onecx:
         permissions:
@@ -689,7 +689,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RFCProblem'
-  /v1/document/{id}:
+  /document/{id}:
     get:
       x-onecx:
         permissions:
@@ -775,7 +775,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RFCProblem'
-  /v1/files/bucket/{name}:
+  /files/bucket/{name}:
     post:
       x-onecx:
         permissions:
@@ -797,7 +797,7 @@ paths:
           description: Created
         "400":
           description: Bad request
-  /v1/files/{bucket}/{path}:
+  /files/{bucket}/{path}:
     get:
       x-onecx:
         permissions:
@@ -888,7 +888,7 @@ paths:
           description: File Deleted
         "404":
           description: Not Found
-  /v1/supported-mime-type:
+  /supported-mime-type:
     get:
       x-onecx:
         permissions:
@@ -940,7 +940,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RFCProblem'
-  /v1/supported-mime-type/{id}:
+  /supported-mime-type/{id}:
     get:
       x-onecx:
         permissions:
@@ -1032,7 +1032,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RFCProblem'
-  /v1/document/files/upload/{documentId}:
+  /document/files/upload/{documentId}:
     post:
       x-onecx:
         permissions:
