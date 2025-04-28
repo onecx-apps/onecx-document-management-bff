@@ -116,6 +116,12 @@ h| Version
 | https://github.com/1000kit/tkit-quarkus/blob/2.36.0/docs/modules/tkit-quarkus/pages/includes/tkit-quarkus-security.adoc[Link]
 | 2.36.0
 
+| onecx-permissions
+
+| https://onecx.github.io/docs/onecx-quarkus/current/onecx-quarkus/onecx-permissions.html[Link]
+| https://github.com/onecx/onecx-quarkus/blob/0.34.0/docs/modules/onecx-quarkus/pages/includes/onecx-permissions.adoc[Link]
+| 0.34.0
+
 | onecx-core
 
 | https://onecx.github.io/docs/onecx-quarkus/current/onecx-quarkus/onecx-core.html[Link]
@@ -138,29 +144,6 @@ h| Version
 
 | https://quarkus.io/guides/cdi-reference[Link]
 | https://github.com/quarkusio/quarkusio.github.io/blob/develop/_generated-doc/latest/config/quarkus-arc.adoc[Link]
-| 3.15.1
-
-
-| tkit-quarkus-bff-lib
-
-| 
-| 
-| 1.0.0
-
-| quarkus-smallrye-jwt-build
-
-| 
-| 
-| 3.15.1
-
-| quarkus-rest-client-oidc-filter
-
-| 
-| 
-| 3.15.1
-
-
-|===com/quarkusio/quarkusio.github.io/blob/develop/_generated-doc/latest/config/quarkus-arc.adoc[Link]
 | 3.15.1
 
 

@@ -120,6 +120,10 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.tkit.onecx.quarkus</groupId>
+            <artifactId>onecx-permissions</artifactId>
+        </dependency>
 
         <!-- TEST -->
         <dependency>
@@ -211,8 +215,7 @@
                             <!--                            <url>https://github.com/onecx-apps/onecx-document-management-svc/blob/main/src/main/openapi/document-management-svc.yaml</url>-->
                             <url>
                                 <!--                                https://raw.githubusercontent.com/onecx-apps/onecx-document-management-svc/main/src/main/openapi/document-management-svc.yaml-->
-<!--                                https://raw.githubusercontent.com/ASPRADHA/onecx-document-management-bff/refs/heads/quarkus3-upgrade/src/main/openapi/document-management-svc.yaml-->
-                                https://raw.githubusercontent.com/ASPRADHA/onecx-document-management-svc/refs/heads/DTo_Suffix_Fix/src/main/openapi/document-management-svc.yaml
+                                https://raw.githubusercontent.com/onecx-apps/onecx-document-management-svc/refs/heads/main/src/main/openapi/document-management-svc.yaml
                             </url>
                             <outputDirectory>target/tmp/openapi</outputDirectory>
                             <outputFileName>onecx-document-management-svc.yaml</outputFileName>
