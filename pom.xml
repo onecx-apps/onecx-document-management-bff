@@ -120,6 +120,10 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.tkit.onecx.quarkus</groupId>
+            <artifactId>onecx-permissions</artifactId>
+        </dependency>
 
         <!-- TEST -->
         <dependency>
