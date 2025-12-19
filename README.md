@@ -1,4 +1,4 @@
-# OneCX Document-Management-Service
+# OneCX Document Management Backend for Frontend
 A getting started guide for local development can be found here [OneCX Document Management BFF](https://onecx.github.io/docs/document-management/current/bff/index.html).
 The documentation about Document Management in general can be found here [OneCX Document Management](https://onecx.github.io/docs/document-management/current/general/index.html).
 
