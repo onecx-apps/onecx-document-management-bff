@@ -10,37 +10,25 @@ include::onecx-document-management-bff-attributes.adoc[opts=optional]
 ====
 [source,properties,subs=attributes+]
 ----
-documentmgmt/mp-rest/url=http://onecx-document-management-svc:8080
-documentmgmt/mp-rest/forward-headers=true
-apm/mp-rest/url=http://tkit-apm:8080/tkit-apm-rs/v2
-ahm/mp-rest/url=http://announcement-help-management:8080
-portalLaunchpad/mp-rest/url=http://portal-launchpad:8080
-tkitPortalServer/mp-rest/url=http://tkit-portal-server:8080
-mp.openapi.scan.disable=false
-tkit.log.json.enabled=false
-org.eclipse.microprofile.rest.client.propagateHeaders=apm-principal-token
-quarkus.oidc-client.client-id=${quarkus.application.name}
-smallrye.jwt.path.groups =realm_access/roles
-quarkus.http.limits.max-body-size=20240K
-dms.file-upload.proxy-path=/v1/document/files/upload/*
 quarkus.http.auth.permission.health.paths=/q/*
 quarkus.http.auth.permission.health.policy=permit
 quarkus.http.auth.permission.default.paths=/*
 quarkus.http.auth.permission.default.policy=authenticated
 onecx.permissions.application-id=${quarkus.application.name}
-quarkus.rest-client.onecx_document_svc.url = http://onecx-document-management-svc:8080
+%prod.quarkus.rest-client.onecx_document_svc.url = http://onecx-document-management-svc:8080
+org.eclipse.microprofile.rest.client.propagateHeaders=apm-principal-token
+quarkus.http.limits.max-body-size=20240K
+quarkus.openapi-generator.codegen.input-base-dir=target/tmp/openapi
 quarkus.openapi-generator.codegen.spec.onecx_document_management_svc_yaml.config-key=onecx_document_svc
 quarkus.openapi-generator.codegen.spec.onecx_document_management_svc_yaml.base-package=gen.org.tkit.onecx.document-management.client
 quarkus.openapi-generator.codegen.spec.onecx_document_management_svc_yaml.return-response=true
-quarkus.openapi-generator.codegen.input-base-dir=target/tmp/openapi
 quarkus.openapi-generator.codegen.spec.onecx_document_management_svc_yaml.additional-api-type-annotations=@org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
-quarkus.openapi-generator.codegen.spec.onecx_document_management_svc_yaml.additional-model-type-annotations=@io.quarkus.runtime.annotations.RegisterForReflection;
-quarkus.openapi-generator.onecx_document_management_svc_yaml.auth.oauth2.token-propagation=false
 quarkus.openapi-generator.codegen.spec.onecx_document_management_svc_yaml.enable-security-generation=false
 quarkus.openapi-generator.codegen.spec.onecx_document_management_svc_yaml.import-mappings=MultipartFormDataInput=org.jboss.resteasy.reactive.server.multipart.MultipartFormDataInput
 quarkus.openapi-generator.codegen.spec.onecx_document_management_svc_yaml.type-mappings.File=java.io.File
 quarkus.openapi-generator.codegen.spec.onecx_document_management_svc_yaml.type-mappings.MultipartFormDataInput=org.jboss.resteasy.reactive.server.multipart.MultipartFormDataInput
-quarkus.rest-client.onecx_document_svc.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter
+%prod.quarkus.rest-client.onecx_document_svc.providers=io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter
+%prod.quarkus.oidc-client.client-id=${quarkus.application.name}
 ----
 ====
 

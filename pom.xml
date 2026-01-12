@@ -32,11 +32,6 @@
             <artifactId>tkit-quarkus-rest</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.tkit.quarkus</groupId>
-            <artifactId>tkit-quarkus-bff-lib</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
             <groupId>org.tkit.quarkus.lib</groupId>
             <artifactId>tkit-quarkus-log-json</artifactId>
         </dependency>
@@ -59,21 +54,9 @@
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-container-image-docker</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkus</groupId>
             <artifactId>quarkus-smallrye-health</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-smallrye-jwt</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-smallrye-jwt-build</artifactId>
-        </dependency>
         <dependency>
             <groupId>io.quarkiverse.openapi.generator</groupId>
             <artifactId>quarkus-openapi-generator</artifactId>
@@ -208,15 +191,12 @@
                             <goal>wget</goal>
                         </goals>
                         <configuration>
-                            <!--                            <url>https://github.com/onecx-apps/onecx-document-management-svc/blob/main/src/main/openapi/document-management-svc.yaml</url>-->
                             <url>
-                                <!--                                https://raw.githubusercontent.com/onecx-apps/onecx-document-management-svc/main/src/main/openapi/document-management-svc.yaml-->
                                 https://raw.githubusercontent.com/onecx-apps/onecx-document-management-svc/refs/heads/main/src/main/openapi/document-management-svc.yaml
                             </url>
                             <outputDirectory>target/tmp/openapi</outputDirectory>
                             <outputFileName>onecx-document-management-svc.yaml</outputFileName>
                             <skipCache>true</skipCache>
-
                         </configuration>
                     </execution>
 

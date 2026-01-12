@@ -56,22 +56,10 @@ h| Version
 | https://github.com/quarkusio/quarkusio.github.io/blob/develop/_generated-doc/latest/config/quarkus-rest-client.adoc[Link]
 | 3.27.1
 
-| quarkus-container-image-docker
-
-| https://quarkus.io/guides/container-image[Link]
-| https://github.com/quarkusio/quarkusio.github.io/blob/develop/_generated-doc/latest/config/quarkus-container-image-docker.adoc[Link]
-| 3.27.1
-
 | quarkus-smallrye-health
 
 | https://quarkus.io/guides/smallrye-health[Link]
 | https://github.com/quarkusio/quarkusio.github.io/blob/develop/_generated-doc/latest/config/quarkus-smallrye-health.adoc[Link]
-| 3.27.1
-
-| quarkus-smallrye-jwt
-
-| https://quarkus.io/guides/security-jwt-build[Link]
-| https://github.com/quarkusio/quarkusio.github.io/blob/develop/_generated-doc/latest/config/quarkus-smallrye-jwt.adoc[Link]
 | 3.27.1
 
 | quarkus-openapi-generator
@@ -146,18 +134,12 @@ h| Version
 | https://github.com/quarkusio/quarkusio.github.io/blob/develop/_generated-doc/latest/config/quarkus-arc.adoc[Link]
 | 3.27.1
 
+| quarkus-container-image-docker
 
-| tkit-quarkus-bff-lib
-
-| 
-| 
-| 1.0.0
-
-| quarkus-smallrye-jwt-build
-
-| 
-| 
+| https://quarkus.io/guides/container-image[Link]
+| https://github.com/quarkusio/quarkusio.github.io/blob/develop/_generated-doc/latest/config/quarkus-container-image-docker.adoc[Link]
 | 3.27.1
+
 
 
 |===
