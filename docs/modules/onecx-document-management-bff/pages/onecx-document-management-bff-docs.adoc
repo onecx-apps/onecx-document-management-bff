@@ -1,10 +1,12 @@
 
 include::onecx-document-management-bff-attributes.adoc[opts=optional]
 
-=== Default properties
+{docker-registry}[Link to Docker registry]
+
+== Default properties
 
 .{properties-file}
-[%collapsible%open]
+[%collapsible]
 ====
 [source,properties,subs=attributes+]
 ----
@@ -42,22 +44,18 @@ quarkus.rest-client.onecx_document_svc.providers=io.quarkus.oidc.client.reactive
 ----
 ====
 
-=== Extensions
-
+== Extensions
+.Extensions List
+[%collapsible]
+====
 include::onecx-document-management-bff-extensions.adoc[opts=optional]
+====
 
-=== Container
+== Helm
 
-{docker-registry}[Docker registry]
+{helm-registry}[Link to Helm registry]
 
-
-=== Helm
-
-{helm-registry}[Helm registry]
-
-Default values
-
-.{helm-file}
+.Default values in {helm-file}
 [source,yaml]
 ----
 app:
@@ -83,31 +81,3 @@ app:
   product: false
 
 ----
-
-ocx-doc:all, ocx-doc:read, ocx-doc:write, ocx-pm:read ]
-  product: false
-
-----
-
-ient:
-        enabled: true
-        spec:
-          kcConfig:
-            defaultClientScopes: [ ocx-doc:all, ocx-doc:read, ocx-doc:write ]
-
-  product: false
-
-----
-
-   #            read: permission on all GET requests and POST search
-    keycloak:
-      client:
-        enabled: true
-        spec:
-          kcConfig:
-            defaultClientScopes: [ ocx-doc:all, ocx-doc:read, ocx-doc:write ]
-
-  product: false
-
-----
-
