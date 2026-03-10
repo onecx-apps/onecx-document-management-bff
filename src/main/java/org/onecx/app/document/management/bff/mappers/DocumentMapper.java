@@ -2,13 +2,10 @@
 package org.onecx.app.document.management.bff.mappers;
 
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Named;
-import org.onecx.app.document.management.bff.model.FileUploadResult;
+import org.onecx.app.document.management.bff.model.UploadUrlResult;
 
 import gen.org.tkit.onecx.document_management.client.model.*;
 import gen.org.tkit.onecx.document_management.rs.internal.model.*;
@@ -61,20 +58,7 @@ public interface DocumentMapper {
 
     DocumentSearchCriteria mapToInternalCriteria(DocumentSearchCriteriaDTO searchCriteriaDTO);
 
-    @Mapping(target = "createdBy", source = "document.creationUser")
-    @Mapping(target = "createdDate", source = "document.creationDate")
-    @Mapping(target = "lastModifiedBy", source = "document.modificationUser")
-    @Mapping(target = "lastModifiedDate", source = "document.modificationDate")
-    @Mapping(target = "attachmentResponse", source = "uploadResults", qualifiedByName = "mapAttachmentResponse")
-    DocumentResponse map(List<FileUploadResult> uploadResults, DocumentDetail document);
+    List<UploadAttachmentPresignedUrlResponseDTO> mapUploadResponse(List<UploadUrlResult> uploadResults);
 
     AttachmentPresignedUrlResponseDTO mapPresignedUrl(PresignedUrlResponse response);
-
-    @Named("mapAttachmentResponse")
-    default Map<String, Integer> mapAttachmentResponse(List<FileUploadResult> uploadResults) {
-        return uploadResults.stream().collect(Collectors.toMap(
-                FileUploadResult::attachmentId,
-                FileUploadResult::operationStatusCode));
-    }
-
 }

@@ -943,20 +943,20 @@ paths:
       requestBody:
         required: true
         content:
-          multipart/form-data:
+          application/json:
             schema:
-              type: object
-              properties:
-                files:
-                  type: MultipartFormDataInput
-                  description: upload the multipart files
+              type: array
+              items:
+                $ref: '#/components/schemas/UploadAttachmentPresignedUrlRequest'
       responses:
-        '201':
-          description: Created
+        '200':
+          description: Ok
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DocumentResponse'
+                type: array
+                items:
+                  $ref: '#/components/schemas/UploadAttachmentPresignedUrlResponse'
         '400':
           description: Bad request
         '404':
@@ -1704,6 +1704,21 @@ components:
         expiration:
           type: string
           format: date-time
+    UploadAttachmentPresignedUrlRequest:
+      properties:
+        fileName:
+          type: string
+        attachmentId:
+          type: string
+    UploadAttachmentPresignedUrlResponse:
+      properties:
+        url:
+          type: string
+        expiration:
+          type: string
+          format: date-time
+        attachmentId:
+          type: string
     FileMultipartBody:
       type: object
       properties:

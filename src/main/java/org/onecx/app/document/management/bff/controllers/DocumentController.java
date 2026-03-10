@@ -9,9 +9,7 @@ import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.Response;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
-import org.jboss.resteasy.reactive.server.multipart.MultipartFormDataInput;
 import org.onecx.app.document.management.bff.mappers.DocumentMapper;
-import org.onecx.app.document.management.bff.service.DocumentService;
 import org.onecx.app.document.management.bff.service.AttachmentService;
 
 import gen.org.tkit.onecx.document_management.client.api.DocumentControllerV1Api;
@@ -30,9 +28,6 @@ public class DocumentController implements DocumentControllerV1ApiService {
 
     @Inject
     AttachmentService fileService;
-
-    @Inject
-    DocumentService documentService;
 
     @Override
     public Response bulkUpdateDocument(List<DocumentCreateUpdateDTO> documentCreateUpdateDTOS) {
@@ -152,13 +147,12 @@ public class DocumentController implements DocumentControllerV1ApiService {
     }
 
     @Override
-    public Response uploadAllFiles(String documentId, MultipartFormDataInput files) {
+    public Response uploadAllFiles(String documentId, List<UploadAttachmentPresignedUrlRequestDTO> request) {
         final var documentDetail = documentControllerV1Api.getDocumentById(documentId)
                 .readEntity(DocumentDetail.class);
-        final var uploadResults = fileService.uploadAllFiles(documentDetail, files);
-        documentService.persistFileUploadResults(uploadResults);
+        final var uploadResults = fileService.getUploadPresignedUrls(documentDetail, request);
         return Response.ok()
-                .entity(mapper.map(uploadResults, documentDetail))
+                .entity(mapper.mapUploadResponse(uploadResults))
                 .build();
     }
 }

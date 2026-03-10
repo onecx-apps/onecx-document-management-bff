@@ -1,12 +1,6 @@
 package org.onecx.app.document.management.bff.service;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.net.URLConnection;
-import java.nio.file.Files;
+import java.time.OffsetDateTime;
 import java.util.*;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -14,20 +8,15 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.InternalServerErrorException;
 import jakarta.ws.rs.NotFoundException;
-import jakarta.ws.rs.core.HttpHeaders;
-import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-import org.apache.commons.io.IOUtils;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
-import org.jboss.resteasy.reactive.server.multipart.FormValue;
-import org.jboss.resteasy.reactive.server.multipart.MultipartFormDataInput;
-import org.onecx.app.document.management.bff.model.FileUploadResult;
+import org.onecx.app.document.management.bff.model.UploadUrlResult;
 
 import gen.org.tkit.onecx.document_management.client.api.AttachmentControllerV1Api;
 import gen.org.tkit.onecx.document_management.client.model.Attachment;
-import gen.org.tkit.onecx.document_management.client.model.AttachmentUnit;
 import gen.org.tkit.onecx.document_management.client.model.DocumentDetail;
+import gen.org.tkit.onecx.document_management.rs.internal.model.UploadAttachmentPresignedUrlRequestDTO;
 import gen.org.tkit.onecx.filestorage.client.api.FileStorageApi;
 import gen.org.tkit.onecx.filestorage.client.model.PresignedUrlRequest;
 import gen.org.tkit.onecx.filestorage.client.model.PresignedUrlResponse;
@@ -44,57 +33,40 @@ public class AttachmentService {
     AttachmentControllerV1Api attachmentClient;
 
     private static final String NAME_DIVIDER = "_";
-    private static final String STRING_TOKEN_DELIMITER = ",";
-    private static final String FORM_DATA_MAP_KEY = "file";
     private static final String PRODUCT_NAME = "onecx-document-management";
     private static final String APP_NAME = "onecx-document-management-bff";
-    private static final String STORAGE_TYPE = "rustfs";
 
-    public List<FileUploadResult> uploadAllFiles(final DocumentDetail documentDetail, MultipartFormDataInput dataInput) {
-        final var mediaType = resolveMediaType(dataInput);
-        final var inputParts = dataInput.getValues().get(FORM_DATA_MAP_KEY);
-        final var attachmentsToProcess = resolveAttachmentsToProcess(documentDetail, inputParts, mediaType);
-        final List<FileUploadResult> results = new ArrayList<>();
-        attachmentsToProcess.forEach(att -> results.add(processAttachment(documentDetail, att, inputParts)));
+    public List<UploadUrlResult> getUploadPresignedUrls(final DocumentDetail documentDetail,
+                                                        List<UploadAttachmentPresignedUrlRequestDTO> request) {
+        var attachmentsToProcess = resolveAttachmentsToProcess(documentDetail, request);
+        var results = new ArrayList<UploadUrlResult>();
+        attachmentsToProcess
+                .forEach(attachment -> results.add(processAttachment(documentDetail, attachment, request)));
         return results;
     }
 
     public PresignedUrlResponse getFilePresignedUrl(final String attachmentId) {
         final var attachment = getAttachment(attachmentId);
-        final var downloadRequest = getDownloadURLRequest(attachment);
-        return getPresignedUrl(downloadRequest);
+        final var downloadRequest = getPresignedUrlRequest(attachment);
+        return getPresignedDownloadUrl(downloadRequest);
     }
 
-    private FileUploadResult processAttachment(final DocumentDetail documentDetail, final Attachment attachment,
-            final Collection<FormValue> inputParts) {
-        final var matchedInputPartOptional = inputParts.stream()
-                .filter(inputPart -> attachment.getFileName().equals(inputPart.getFileName()))
+    private UploadUrlResult processAttachment(final DocumentDetail documentDetail, final Attachment attachment,
+                                              final List<UploadAttachmentPresignedUrlRequestDTO> requestedAttachments) {
+        final var matchedAttachmentOpt = requestedAttachments.stream()
+                .filter(requestedAttachment -> attachment.getFileName().equals(requestedAttachment.getFileName()))
                 .findFirst();
-        if (matchedInputPartOptional.isEmpty()) {
-            return getResult(documentDetail.getId(), attachment.getId());
+        if (matchedAttachmentOpt.isEmpty()) {
+            return getUploadResult(documentDetail.getId(), attachment.getId());
         }
-        final var inputPart = matchedInputPartOptional.get();
+        final var matchedAttachment = matchedAttachmentOpt.get();
+        final var request = getPresignedUrlRequest(matchedAttachment);
         try {
-            InputStream inputPartBody = inputPart.getFileItem().getInputStream();
-            byte[] fileBytes = IOUtils.toByteArray(inputPartBody);
-            String contentType = URLConnection.guessContentTypeFromStream(new ByteArrayInputStream(fileBytes));
-            uploadAttachment(fileBytes, attachment.getId(), attachment.getFileName());
-            return getResult(documentDetail.getId(), attachment.getId(), Response.Status.CREATED.getStatusCode(),
-                    BigDecimal.valueOf(fileBytes.length), AttachmentUnit.BYTES, STORAGE_TYPE, contentType, true);
+            var urlBody = getPresignedUploadUrl(request);
+            return getUploadResult(documentDetail.getId(), attachment.getId(), Response.Status.OK.getStatusCode(),
+                    urlBody.getUrl(), urlBody.getExpiration());
         } catch (Exception e) {
-            return getResult(documentDetail.getId(), attachment.getId());
-        }
-
-    }
-
-    private void uploadAttachment(final byte[] fileBytes, final String attachmentId, final String fileName)
-            throws IOException {
-        var tempFile = File.createTempFile(attachmentId, fileName);
-        tempFile.deleteOnExit();
-        Files.write(tempFile.toPath(), fileBytes);
-        var finalFileName = getUploadFileName(attachmentId, fileName);
-        var request = getUploadRequest(tempFile, finalFileName);
-        try (var ignored = fileStorageApi.uploadFile(request)) {
+            return getUploadResult(documentDetail.getId(), attachment.getId());
         }
     }
 
@@ -102,65 +74,37 @@ public class AttachmentService {
         return String.format("%s%s%s", attachmentId, NAME_DIVIDER, fileName);
     }
 
-    private String resolveMediaType(MultipartFormDataInput input) {
-        for (Map.Entry<String, Collection<FormValue>> attribute : input.getValues().entrySet()) {
-            for (FormValue fv : attribute.getValue()) {
-                if (fv.isFileItem()) {
-                    return fv.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE);
-                }
-            }
-        }
-        return "";
-    }
-
-    private Set<Attachment> resolveAttachmentsToProcess(DocumentDetail document, Collection<FormValue> inputParts,
-            String mediaType) {
+    private Set<Attachment> resolveAttachmentsToProcess(DocumentDetail document,
+            List<UploadAttachmentPresignedUrlRequestDTO> requests) {
         Set<Attachment> attachmentSet = new HashSet<>();
-        if (String.valueOf(MediaType.valueOf(mediaType)).equals("text/plain")) {
-            List<String> attachmentIdList = getAttachmentIdList(inputParts.stream().toList());
-            inputParts.remove(0);
-            attachmentIdList.forEach(attachmentId -> document.getAttachments().stream()
-                    .filter(attachment -> attachmentId.equals(attachment.getId()))
-                    .findFirst()
-                    .ifPresent(attachmentSet::add));
-        } else {
-            attachmentSet.addAll(document.getAttachments());
-        }
+        requests.forEach(uploadRequest -> document.getAttachments().stream()
+                .filter(attachment -> uploadRequest.getAttachmentId().equals(attachment.getId()))
+                .findFirst()
+                .ifPresent(attachmentSet::add));
         return attachmentSet;
     }
 
-    private List<String> getAttachmentIdList(List<FormValue> inputPartList) {
-        List<String> attachmentIdList = new ArrayList<>();
-        var stringTokenizer = new StringTokenizer(String.valueOf(inputPartList.get(0).getFileItem()),
-                STRING_TOKEN_DELIMITER);
-        while (stringTokenizer.hasMoreTokens()) {
-            attachmentIdList.add(stringTokenizer.nextToken());
-        }
-        return attachmentIdList;
+    private UploadUrlResult getUploadResult(final String documentId, final String attachmentId) {
+        return getUploadResult(documentId, attachmentId, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+                null, null);
     }
 
-    private FileUploadResult getResult(final String documentId, final String attachmentId) {
-        return getResult(documentId, attachmentId, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-                null, null, null, null, false);
+    private UploadUrlResult getUploadResult(final String documentId, final String attachmentId, final Integer code,
+                                            final String url, final OffsetDateTime expiring) {
+        return new UploadUrlResult(documentId, attachmentId, code, url, expiring);
     }
 
-    private FileUploadResult getResult(final String documentId, final String attachmentId, final Integer code,
-            final BigDecimal attachmentSize, final AttachmentUnit sizeUnit, final String storage,
-            final String type, final boolean isSuccess) {
-        return new FileUploadResult(documentId, attachmentId, code, attachmentSize, sizeUnit, storage, type, isSuccess);
+    private PresignedUrlRequest getPresignedUrlRequest(final UploadAttachmentPresignedUrlRequestDTO uploadRequest) {
+        var fileName = getUploadFileName(uploadRequest.getAttachmentId(), uploadRequest.getFileName());
+        return getPresignedUrlRequest(fileName);
     }
 
-    private FileStorageApi.UploadFileMultipartForm getUploadRequest(final File file, final String fileName) {
-        final var request = new FileStorageApi.UploadFileMultipartForm();
-        request.applicationId = APP_NAME;
-        request.productName = PRODUCT_NAME;
-        request._file = file;
-        request.fileName = fileName;
-        return request;
-    }
-
-    private PresignedUrlRequest getDownloadURLRequest(final Attachment attachment) {
+    private PresignedUrlRequest getPresignedUrlRequest(final Attachment attachment) {
         final var fileName = getUploadFileName(attachment.getId(), attachment.getFileName());
+        return getPresignedUrlRequest(fileName);
+    }
+
+    private PresignedUrlRequest getPresignedUrlRequest(final String fileName) {
         final var request = new PresignedUrlRequest();
         request.setApplicationId(APP_NAME);
         request.setProductName(PRODUCT_NAME);
@@ -179,8 +123,17 @@ public class AttachmentService {
         return attResponse.readEntity(Attachment.class);
     }
 
-    private PresignedUrlResponse getPresignedUrl(final PresignedUrlRequest downloadRequest) {
+    private PresignedUrlResponse getPresignedDownloadUrl(final PresignedUrlRequest downloadRequest) {
         var response = fileStorageApi.getPresignedDownloadUrl(downloadRequest);
+        return handlePresignedUrlResponse(response);
+    }
+
+    private PresignedUrlResponse getPresignedUploadUrl(final PresignedUrlRequest updateRequest) {
+        var response = fileStorageApi.getPresignedUploadUrl(updateRequest);
+        return handlePresignedUrlResponse(response);
+    }
+
+    private PresignedUrlResponse handlePresignedUrlResponse(final Response response) {
         if (response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode()) {
             throw new BadRequestException("File could not be downloaded");
         }
