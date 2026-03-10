@@ -12,6 +12,7 @@ import org.onecx.app.document.management.bff.model.FileUploadResult;
 
 import gen.org.tkit.onecx.document_management.client.model.*;
 import gen.org.tkit.onecx.document_management.rs.internal.model.*;
+import gen.org.tkit.onecx.filestorage.client.model.PresignedUrlResponse;
 
 @Mapper
 public interface DocumentMapper {
@@ -66,6 +67,8 @@ public interface DocumentMapper {
     @Mapping(target = "lastModifiedDate", source = "document.modificationDate")
     @Mapping(target = "attachmentResponse", source = "uploadResults", qualifiedByName = "mapAttachmentResponse")
     DocumentResponse map(List<FileUploadResult> uploadResults, DocumentDetail document);
+
+    AttachmentPresignedUrlResponseDTO mapPresignedUrl(PresignedUrlResponse response);
 
     @Named("mapAttachmentResponse")
     default Map<String, Integer> mapAttachmentResponse(List<FileUploadResult> uploadResults) {

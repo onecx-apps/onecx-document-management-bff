@@ -12,7 +12,7 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.resteasy.reactive.server.multipart.MultipartFormDataInput;
 import org.onecx.app.document.management.bff.mappers.DocumentMapper;
 import org.onecx.app.document.management.bff.service.DocumentService;
-import org.onecx.app.document.management.bff.service.FileService;
+import org.onecx.app.document.management.bff.service.AttachmentService;
 
 import gen.org.tkit.onecx.document_management.client.api.DocumentControllerV1Api;
 import gen.org.tkit.onecx.document_management.client.model.DocumentDetail;
@@ -29,7 +29,7 @@ public class DocumentController implements DocumentControllerV1ApiService {
     DocumentMapper mapper;
 
     @Inject
-    FileService fileService;
+    AttachmentService fileService;
 
     @Inject
     DocumentService documentService;
@@ -125,11 +125,10 @@ public class DocumentController implements DocumentControllerV1ApiService {
 
     @Override
     public Response getFile(String attachmentId) {
-        try (Response response = documentControllerV1Api.getFile(attachmentId)) {
-            return Response.status(response.getStatus())
-                    .entity(response.readEntity(File.class))
-                    .build();
-        }
+        var presignedUrl = fileService.getFilePresignedUrl(attachmentId);
+        return Response
+                .ok(mapper.mapPresignedUrl(presignedUrl))
+                .build();
     }
 
     @Override

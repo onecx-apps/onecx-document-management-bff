@@ -11,6 +11,9 @@ import java.util.*;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.InternalServerErrorException;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -21,17 +24,24 @@ import org.jboss.resteasy.reactive.server.multipart.FormValue;
 import org.jboss.resteasy.reactive.server.multipart.MultipartFormDataInput;
 import org.onecx.app.document.management.bff.model.FileUploadResult;
 
+import gen.org.tkit.onecx.document_management.client.api.AttachmentControllerV1Api;
 import gen.org.tkit.onecx.document_management.client.model.Attachment;
 import gen.org.tkit.onecx.document_management.client.model.AttachmentUnit;
 import gen.org.tkit.onecx.document_management.client.model.DocumentDetail;
 import gen.org.tkit.onecx.filestorage.client.api.FileStorageApi;
+import gen.org.tkit.onecx.filestorage.client.model.PresignedUrlRequest;
+import gen.org.tkit.onecx.filestorage.client.model.PresignedUrlResponse;
 
 @ApplicationScoped
-public class FileService {
+public class AttachmentService {
 
     @Inject
     @RestClient
     FileStorageApi fileStorageApi;
+
+    @Inject
+    @RestClient
+    AttachmentControllerV1Api attachmentClient;
 
     private static final String NAME_DIVIDER = "_";
     private static final String STRING_TOKEN_DELIMITER = ",";
@@ -47,6 +57,12 @@ public class FileService {
         final List<FileUploadResult> results = new ArrayList<>();
         attachmentsToProcess.forEach(att -> results.add(processAttachment(documentDetail, att, inputParts)));
         return results;
+    }
+
+    public PresignedUrlResponse getFilePresignedUrl(final String attachmentId) {
+        final var attachment = getAttachment(attachmentId);
+        final var downloadRequest = getDownloadURLRequest(attachment);
+        return getPresignedUrl(downloadRequest);
     }
 
     private FileUploadResult processAttachment(final DocumentDetail documentDetail, final Attachment attachment,
@@ -141,5 +157,36 @@ public class FileService {
         request._file = file;
         request.fileName = fileName;
         return request;
+    }
+
+    private PresignedUrlRequest getDownloadURLRequest(final Attachment attachment) {
+        final var fileName = getUploadFileName(attachment.getId(), attachment.getFileName());
+        final var request = new PresignedUrlRequest();
+        request.setApplicationId(APP_NAME);
+        request.setProductName(PRODUCT_NAME);
+        request.setFileName(fileName);
+        return request;
+    }
+
+    private Attachment getAttachment(final String attachmentId) {
+        final var attResponse = attachmentClient.getAttachmentDetails(attachmentId);
+        if (attResponse.getStatus() == Response.Status.NOT_FOUND.getStatusCode()) {
+            throw new NotFoundException("Attachment not found");
+        }
+        if (attResponse.getStatus() != Response.Status.OK.getStatusCode()) {
+            throw new InternalServerErrorException();
+        }
+        return attResponse.readEntity(Attachment.class);
+    }
+
+    private PresignedUrlResponse getPresignedUrl(final PresignedUrlRequest downloadRequest) {
+        var response = fileStorageApi.getPresignedDownloadUrl(downloadRequest);
+        if (response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode()) {
+            throw new BadRequestException("File could not be downloaded");
+        }
+        if (response.getStatus() != Response.Status.OK.getStatusCode()) {
+            throw new InternalServerErrorException();
+        }
+        return response.readEntity(PresignedUrlResponse.class);
     }
 }

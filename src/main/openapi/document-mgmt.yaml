@@ -481,12 +481,13 @@ paths:
         "200":
           description: OK
           content:
-            application/octet-stream:
+            application/json:
               schema:
-                format: binary
-                type: string
+                $ref: '#/components/schemas/AttachmentPresignedUrlResponse'
         "404":
           description: Not found
+        "400":
+          description: Bad request
   /document/file/{documentId}/attachments:
     get:
       x-onecx:
@@ -1696,6 +1697,13 @@ components:
               additionalProperties:
                 type: integer
               description: Map of attachment names to their response codes
+    AttachmentPresignedUrlResponse:
+      properties:
+        url:
+          type: string
+        expiration:
+          type: string
+          format: date-time
     FileMultipartBody:
       type: object
       properties:
