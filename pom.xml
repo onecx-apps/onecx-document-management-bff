@@ -191,15 +191,25 @@
                             <goal>wget</goal>
                         </goals>
                         <configuration>
-                            <url>
-                                https://raw.githubusercontent.com/onecx-apps/onecx-document-management-svc/refs/heads/main/src/main/openapi/document-management-svc.yaml
-                            </url>
+                            <uri>https://raw.githubusercontent.com/onecx-apps/onecx-document-management-svc/refs/heads/main/src/main/openapi/document-management-svc.yaml</uri>
                             <outputDirectory>target/tmp/openapi</outputDirectory>
                             <outputFileName>onecx-document-management-svc.yaml</outputFileName>
                             <skipCache>true</skipCache>
                         </configuration>
                     </execution>
-
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <id>file-storage-svc-internal</id>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <uri>https://raw.githubusercontent.com/onecx/onecx-file-storage-svc/refs/heads/main/src/main/openapi/onecx-file-storage-v1.yaml</uri>
+                            <outputDirectory>target/tmp/openapi</outputDirectory>
+                            <outputFileName>onecx-file-storage-svc.yaml</outputFileName>
+                            <skipCache>true</skipCache>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>

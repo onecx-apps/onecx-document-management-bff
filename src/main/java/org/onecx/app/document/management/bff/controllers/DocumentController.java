@@ -11,8 +11,11 @@ import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.resteasy.reactive.server.multipart.MultipartFormDataInput;
 import org.onecx.app.document.management.bff.mappers.DocumentMapper;
+import org.onecx.app.document.management.bff.service.DocumentService;
+import org.onecx.app.document.management.bff.service.FileService;
 
 import gen.org.tkit.onecx.document_management.client.api.DocumentControllerV1Api;
+import gen.org.tkit.onecx.document_management.client.model.DocumentDetail;
 import gen.org.tkit.onecx.document_management.rs.internal.DocumentControllerV1ApiService;
 import gen.org.tkit.onecx.document_management.rs.internal.model.*;
 
@@ -24,6 +27,12 @@ public class DocumentController implements DocumentControllerV1ApiService {
 
     @Inject
     DocumentMapper mapper;
+
+    @Inject
+    FileService fileService;
+
+    @Inject
+    DocumentService documentService;
 
     @Override
     public Response bulkUpdateDocument(List<DocumentCreateUpdateDTO> documentCreateUpdateDTOS) {
@@ -145,13 +154,12 @@ public class DocumentController implements DocumentControllerV1ApiService {
 
     @Override
     public Response uploadAllFiles(String documentId, MultipartFormDataInput files) {
-        DocumentControllerV1Api.UploadAllFilesMultipartForm multipart = new DocumentControllerV1Api.UploadAllFilesMultipartForm();
-        multipart.files = files;
-
-        try (Response response = documentControllerV1Api.uploadAllFiles(multipart, documentId)) {
-            return Response.status(response.getStatus())
-                    .entity(mapper.map(response.readEntity(DocumentResponseDTO.class)))
-                    .build();
-        }
+        final var documentDetail = documentControllerV1Api.getDocumentById(documentId)
+                .readEntity(DocumentDetail.class);
+        final var uploadResults = fileService.uploadAllFiles(documentDetail, files);
+        documentService.persistFileUploadResults(uploadResults);
+        return Response.ok()
+                .entity(mapper.map(uploadResults, documentDetail))
+                .build();
     }
 }
