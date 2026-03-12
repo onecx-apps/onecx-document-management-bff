@@ -520,6 +520,58 @@ paths:
           description: Bad request
         "204":
           description: No content
+  /document/{documentId}/files/metadata:
+    patch:
+      x-onecx:
+        permissions:
+          document:
+            - write
+      tags:
+        - DocumentControllerV1
+      operationId: updateAttachmentsMetadata
+      description: Update attachment metadata for specified document
+      parameters:
+        - name: documentId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/UpdateFileMetadataRequest"
+      responses:
+        "200":
+          description: Metadata updated
+  /document/{documentId}/files/audit-log:
+    patch:
+      x-onecx:
+        permissions:
+          document:
+            - write
+      tags:
+        - DocumentControllerV1
+      operationId: createFailedAttachmentsAuditLogs
+      description: Create audit logs for failed attachments
+      parameters:
+        - name: documentId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/UpdateFileMetadataRequest"
+      responses:
+        "201":
+          description: Audit logs created
   /document/files/upload/failed/{id}:
     get:
       x-onecx:
@@ -1717,6 +1769,11 @@ components:
         expiration:
           type: string
           format: date-time
+        attachmentId:
+          type: string
+    UpdateFileMetadataRequest:
+      type: object
+      properties:
         attachmentId:
           type: string
     FileMultipartBody:

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.onecx.app.document.management.bff.model.MetadataResult;
 import org.onecx.app.document.management.bff.model.UploadUrlResult;
 
 import gen.org.tkit.onecx.document_management.client.model.*;
@@ -61,4 +62,10 @@ public interface DocumentMapper {
     List<UploadAttachmentPresignedUrlResponseDTO> mapUploadResponse(List<UploadUrlResult> uploadResults);
 
     AttachmentPresignedUrlResponseDTO mapPresignedUrl(PresignedUrlResponse response);
+
+    @Mapping(target = "size", source = "response.size")
+    @Mapping(target = "sizeUnit", source = "response.sizeUnit")
+    @Mapping(target = "storage", source = "response.storage")
+    @Mapping(target = "type", source = "response.type")
+    AttachmentMetadataUpload mapToMetadataUpload(MetadataResult metadataResults);
 }

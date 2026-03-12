@@ -155,4 +155,18 @@ public class DocumentController implements DocumentControllerV1ApiService {
                 .entity(mapper.mapUploadResponse(uploadResults))
                 .build();
     }
+
+    @Override
+    public Response updateAttachmentsMetadata(String documentId,
+            List<UpdateFileMetadataRequestDTO> updateFileMetadataRequestDTO) {
+        final var documentDetail = documentControllerV1Api.getDocumentById(documentId)
+                .readEntity(DocumentDetail.class);
+        return fileService.updateAttachmentsMetadata(documentDetail, updateFileMetadataRequestDTO);
+    }
+
+    @Override
+    public Response createFailedAttachmentsAuditLogs(String documentId,
+            List<UpdateFileMetadataRequestDTO> updateFileMetadataRequestDTO) {
+        return fileService.createAttachmentsAuditLogs(documentId, updateFileMetadataRequestDTO);
+    }
 }
