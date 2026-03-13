@@ -64,8 +64,6 @@ public interface DocumentMapper {
     AttachmentPresignedUrlResponseDTO mapPresignedUrl(PresignedUrlResponse response);
 
     @Mapping(target = "size", source = "response.size")
-    @Mapping(target = "sizeUnit", source = "response.sizeUnit")
-    @Mapping(target = "storage", source = "response.storage")
     @Mapping(target = "type", source = "response.type")
     AttachmentMetadataUpload mapToMetadataUpload(MetadataResult metadataResults);
 }
