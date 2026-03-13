@@ -94,16 +94,15 @@ public class AttachmentService {
                 .filter(requestedAttachment -> attachment.getFileName().equals(requestedAttachment.getFileName()))
                 .findFirst();
         if (matchedAttachmentOpt.isEmpty()) {
-            return getUploadResult(documentDetail.getId(), attachment.getId());
+            return getFailedUploadResult(documentDetail.getId(), attachment.getId());
         }
         final var matchedAttachment = matchedAttachmentOpt.get();
         final var request = getPresignedUrlRequest(matchedAttachment);
         try {
             var urlBody = getPresignedUploadUrl(request);
-            return getUploadResult(documentDetail.getId(), attachment.getId(), Response.Status.OK.getStatusCode(),
-                    urlBody.getUrl(), urlBody.getExpiration());
+            return getSuccessfulUploadResult(documentDetail.getId(), attachment.getId(), urlBody.getUrl(), urlBody.getExpiration());
         } catch (Exception e) {
-            return getUploadResult(documentDetail.getId(), attachment.getId());
+            return getFailedUploadResult(documentDetail.getId(), attachment.getId());
         }
     }
 
@@ -121,14 +120,23 @@ public class AttachmentService {
         return attachmentSet;
     }
 
-    private UploadUrlResult getUploadResult(final String documentId, final String attachmentId) {
-        return getUploadResult(documentId, attachmentId, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-                null, null);
+    private UploadUrlResult getFailedUploadResult(final String documentId, final String attachmentId) {
+        return UploadUrlResult.builder()
+                .documentId(documentId)
+                .attachmentId(attachmentId)
+                .operationStatusCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())
+                .build();
     }
 
-    private UploadUrlResult getUploadResult(final String documentId, final String attachmentId, final Integer code,
-            final String url, final OffsetDateTime expiring) {
-        return new UploadUrlResult(documentId, attachmentId, code, url, expiring);
+    private UploadUrlResult getSuccessfulUploadResult(final String documentId, final String attachmentId,
+                                                      final String url, final OffsetDateTime expiring) {
+        return UploadUrlResult.builder()
+                .documentId(documentId)
+                .attachmentId(attachmentId)
+                .operationStatusCode(Response.Status.OK.getStatusCode())
+                .url(url)
+                .expiration(expiring).build();
+
     }
 
     private PresignedUrlRequest getPresignedUrlRequest(final UploadAttachmentPresignedUrlRequestDTO uploadRequest) {
