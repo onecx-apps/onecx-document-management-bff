@@ -13,6 +13,7 @@ import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.Response;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.onecx.app.document.management.bff.config.StorageIntegrationConfig;
 import org.onecx.app.document.management.bff.mappers.DocumentMapper;
 import org.onecx.app.document.management.bff.model.MetadataResult;
 import org.onecx.app.document.management.bff.model.UploadUrlResult;
@@ -43,9 +44,8 @@ public class AttachmentService {
     @Inject
     DocumentMapper documentMapper;
 
-    private static final String NAME_DIVIDER = "_";
-    private static final String PRODUCT_NAME = "onecx-document-management";
-    private static final String APP_NAME = "onecx-document-management-bff";
+    @Inject
+    StorageIntegrationConfig storageConfig;
 
     public List<UploadUrlResult> getUploadPresignedUrls(final DocumentDetail documentDetail,
             List<UploadAttachmentPresignedUrlRequestDTO> request) {
@@ -108,7 +108,7 @@ public class AttachmentService {
     }
 
     private String getUploadFileName(final String attachmentId, final String fileName) {
-        return String.format("%s%s%s", attachmentId, NAME_DIVIDER, fileName);
+        return String.format("%s%s%s", attachmentId, storageConfig.fileNameSeparator(), fileName);
     }
 
     private Set<Attachment> resolveAttachmentsToProcess(DocumentDetail document,
@@ -143,8 +143,8 @@ public class AttachmentService {
 
     private PresignedUrlRequest getPresignedUrlRequest(final String fileName) {
         final var request = new PresignedUrlRequest();
-        request.setApplicationId(APP_NAME);
-        request.setProductName(PRODUCT_NAME);
+        request.setApplicationId(storageConfig.applicationId());
+        request.setProductName(storageConfig.productName());
         request.setFileName(fileName);
         return request;
     }
@@ -183,8 +183,8 @@ public class AttachmentService {
     private FileMetadataRequest getMetadataRequest(final String fileName) {
         final var request = new FileMetadataRequest();
         request.setFileName(fileName);
-        request.setProductName(PRODUCT_NAME);
-        request.setApplicationId(APP_NAME);
+        request.setProductName(storageConfig.productName());
+        request.setApplicationId(storageConfig.applicationId());
         return request;
     }
 
