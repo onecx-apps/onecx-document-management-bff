@@ -6,14 +6,15 @@ import java.util.stream.Collectors;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.BadRequestException;
-import jakarta.ws.rs.InternalServerErrorException;
-import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.Response;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.jboss.resteasy.reactive.ClientWebApplicationException;
 import org.onecx.app.document.management.bff.config.StorageIntegrationConfig;
+import org.onecx.app.document.management.bff.exception.ErrorCode;
+import org.onecx.app.document.management.bff.exception.RestException;
 import org.onecx.app.document.management.bff.mappers.DocumentMapper;
 import org.onecx.app.document.management.bff.model.MetadataResult;
 import org.onecx.app.document.management.bff.model.UploadUrlResult;
@@ -85,7 +86,13 @@ public class AttachmentService {
             auditDto.setDocumentId(documentId);
             return auditDto;
         }).toList();
-        return attachmentClient.createStorageAuditsForAttachments(requests);
+        try {
+            return attachmentClient.createStorageAuditsForAttachments(requests);
+        } catch (ClientWebApplicationException e) {
+            var response = e.getResponse();
+            throw new RestException((Response.Status) response.getStatusInfo(), "Error on creating audit logs",
+                    ErrorCode.METADATA_ERROR);
+        }
     }
 
     private UploadUrlResult processAttachment(final DocumentDetail documentDetail, final Attachment attachment,
@@ -100,7 +107,8 @@ public class AttachmentService {
         final var request = getPresignedUrlRequest(matchedAttachment);
         try {
             var urlBody = getPresignedUploadUrl(request);
-            return getSuccessfulUploadResult(documentDetail.getId(), attachment.getId(), urlBody.getUrl(), urlBody.getExpiration());
+            return getSuccessfulUploadResult(documentDetail.getId(), attachment.getId(), urlBody.getUrl(),
+                    urlBody.getExpiration());
         } catch (Exception e) {
             return getFailedUploadResult(documentDetail.getId(), attachment.getId());
         }
@@ -124,12 +132,12 @@ public class AttachmentService {
         return UploadUrlResult.builder()
                 .documentId(documentId)
                 .attachmentId(attachmentId)
-                .operationStatusCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())
+                .operationStatusCode(Response.Status.BAD_REQUEST.getStatusCode())
                 .build();
     }
 
     private UploadUrlResult getSuccessfulUploadResult(final String documentId, final String attachmentId,
-                                                      final String url, final OffsetDateTime expiring) {
+            final String url, final OffsetDateTime expiring) {
         return UploadUrlResult.builder()
                 .documentId(documentId)
                 .attachmentId(attachmentId)
@@ -158,32 +166,45 @@ public class AttachmentService {
     }
 
     private Attachment getAttachment(final String attachmentId) {
-        final var attResponse = attachmentClient.getAttachmentDetails(attachmentId);
-        if (attResponse.getStatus() == Response.Status.NOT_FOUND.getStatusCode()) {
-            throw new NotFoundException("Attachment not found");
-        }
-        if (attResponse.getStatus() != Response.Status.OK.getStatusCode()) {
-            throw new InternalServerErrorException();
+        Response attResponse;
+        try {
+            attResponse = attachmentClient.getAttachmentDetails(attachmentId);
+        } catch (ClientWebApplicationException e) {
+            var exceptionResponse = e.getResponse();
+            if (exceptionResponse.getStatus() == Response.Status.NOT_FOUND.getStatusCode()) {
+                var msg = String.format("Attachment %s not found", attachmentId);
+                throw new RestException(Response.Status.NOT_FOUND, msg, ErrorCode.ATTACHMENT_NOT_FOUND);
+            }
+            var msg = String.format("Attachment %s could not be retrieved", attachmentId);
+            throw new RestException(Response.Status.BAD_REQUEST, msg, ErrorCode.ATTACHMENT_ERROR);
         }
         return attResponse.readEntity(Attachment.class);
     }
 
     private PresignedUrlResponse getPresignedDownloadUrl(final PresignedUrlRequest downloadRequest) {
-        var response = fileStorageApi.getPresignedDownloadUrl(downloadRequest);
+        Response response;
+        try {
+            response = fileStorageApi.getPresignedDownloadUrl(downloadRequest);
+        } catch (ClientWebApplicationException e) {
+            response = e.getResponse();
+        }
         return handlePresignedUrlResponse(response);
     }
 
     private PresignedUrlResponse getPresignedUploadUrl(final PresignedUrlRequest updateRequest) {
-        var response = fileStorageApi.getPresignedUploadUrl(updateRequest);
+        Response response;
+        try {
+            response = fileStorageApi.getPresignedUploadUrl(updateRequest);
+        } catch (ClientWebApplicationException e) {
+            response = e.getResponse();
+        }
         return handlePresignedUrlResponse(response);
     }
 
     private PresignedUrlResponse handlePresignedUrlResponse(final Response response) {
-        if (response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode()) {
-            throw new BadRequestException("File could not be downloaded");
-        }
         if (response.getStatus() != Response.Status.OK.getStatusCode()) {
-            throw new InternalServerErrorException();
+            throw new RestException(Response.Status.BAD_REQUEST, "Error during receiving presigned url",
+                    ErrorCode.PRESIGNED_URL_ERROR);
         }
         return response.readEntity(PresignedUrlResponse.class);
     }
@@ -207,7 +228,8 @@ public class AttachmentService {
 
     private List<FileMetadataResponse> handleMetadataResponse(final Response response) {
         if (response.getStatus() != Response.Status.OK.getStatusCode()) {
-            throw new InternalServerErrorException();
+            throw new RestException(Response.Status.BAD_REQUEST,
+                    "Metadata could not be uploaded", ErrorCode.METADATA_ERROR);
         }
         return response.readEntity(new GenericType<>() {
         });

@@ -486,8 +486,16 @@ paths:
                 $ref: '#/components/schemas/AttachmentPresignedUrlResponse'
         "404":
           description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
         "400":
           description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
   /document/file/{documentId}/attachments:
     get:
       x-onecx:
@@ -1011,9 +1019,16 @@ paths:
                   $ref: '#/components/schemas/UploadAttachmentPresignedUrlResponse'
         '400':
           description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
         '404':
           description: Not found
-
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
 components:
   schemas:
     AttachmentCreateUpdate:
@@ -1793,3 +1808,32 @@ components:
         bucket:
           type: string
           description: Name of bucket.
+    ProblemDetailResponse:
+      type: object
+      properties:
+        errorCode:
+          type: string
+        detail:
+          type: string
+        params:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProblemDetailParam'
+        invalidParams:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProblemDetailInvalidParam'
+    ProblemDetailParam:
+      type: object
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+    ProblemDetailInvalidParam:
+      type: object
+      properties:
+        name:
+          type: string
+        message:
+          type: string

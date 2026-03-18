@@ -5,11 +5,15 @@ import java.util.List;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.Response;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
+import org.onecx.app.document.management.bff.exception.RestException;
 import org.onecx.app.document.management.bff.mappers.DocumentMapper;
+import org.onecx.app.document.management.bff.mappers.ExceptionMapper;
 import org.onecx.app.document.management.bff.service.AttachmentService;
 
 import gen.org.tkit.onecx.document_management.client.api.DocumentControllerV1Api;
@@ -28,6 +32,9 @@ public class DocumentController implements DocumentControllerV1ApiService {
 
     @Inject
     AttachmentService fileService;
+
+    @Inject
+    ExceptionMapper exceptionMapper;
 
     @Override
     public Response bulkUpdateDocument(List<DocumentCreateUpdateDTO> documentCreateUpdateDTOS) {
@@ -168,5 +175,17 @@ public class DocumentController implements DocumentControllerV1ApiService {
     public Response createFailedAttachmentsAuditLogs(String documentId,
             List<UpdateFileMetadataRequestDTO> updateFileMetadataRequestDTO) {
         return fileService.createAttachmentsAuditLogs(documentId, updateFileMetadataRequestDTO);
+    }
+
+    @ServerExceptionMapper(priority = 1)
+    public Response handleRestException(RestException restException) {
+        return Response.status(restException.getStatus())
+                .entity(exceptionMapper.map(restException))
+                .build();
+    }
+
+    @ServerExceptionMapper
+    public Response handleClientWebApplicationException(WebApplicationException webApplicationException) {
+        return webApplicationException.getResponse();
     }
 }
