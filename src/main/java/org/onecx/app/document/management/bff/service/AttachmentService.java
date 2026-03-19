@@ -72,7 +72,13 @@ public class AttachmentService {
                 .collect(Collectors.toMap(att -> getUploadFileName(att.getId(), att.getFileName()), Attachment::getId));
 
         final var metadataStorageRequests = attachmentNameIdMap.keySet().stream().map(this::getMetadataRequest).toList();
-        final var storageResponse = fileStorageApi.getMetadataForFiles(metadataStorageRequests);
+        Response storageResponse;
+        try {
+            storageResponse = fileStorageApi.getMetadataForFiles(metadataStorageRequests);
+        } catch (WebApplicationException e) {
+            throw new RestException(Response.Status.BAD_REQUEST,
+                    "Metadata could not be uploaded", ErrorCode.METADATA_ERROR);
+        }
         final var metadataResults = processMetadataResult(storageResponse, attachmentNameIdMap);
         final var updateMetadataRequests = metadataResults.stream().map(documentMapper::mapToMetadataUpload).toList();
         return attachmentClient.uploadAttachmentsMetadata(updateMetadataRequests);
@@ -90,7 +96,7 @@ public class AttachmentService {
             return attachmentClient.createStorageAuditsForAttachments(requests);
         } catch (ClientWebApplicationException e) {
             var response = e.getResponse();
-            throw new RestException((Response.Status) response.getStatusInfo(), "Error on creating audit logs",
+            throw new RestException(Response.Status.fromStatusCode(response.getStatus()), "Error on creating audit logs",
                     ErrorCode.METADATA_ERROR);
         }
     }
@@ -186,7 +192,8 @@ public class AttachmentService {
         try {
             response = fileStorageApi.getPresignedDownloadUrl(downloadRequest);
         } catch (ClientWebApplicationException e) {
-            response = e.getResponse();
+            var msg = "Could not receive file download url";
+            throw new RestException(Response.Status.BAD_REQUEST, msg, ErrorCode.PRESIGNED_URL_ERROR);
         }
         return handlePresignedUrlResponse(response);
     }
@@ -218,20 +225,12 @@ public class AttachmentService {
     }
 
     private List<MetadataResult> processMetadataResult(final Response response, final Map<String, String> fileNameIdMap) {
-        final var results = handleMetadataResponse(response);
+        final var results = response.readEntity(new GenericType<List<FileMetadataResponse>>() {
+        });
         return results.stream().map(result -> {
             final var receivedFileName = result.getFileName();
             final var attId = fileNameIdMap.get(receivedFileName);
             return new MetadataResult(attId, result);
         }).toList();
-    }
-
-    private List<FileMetadataResponse> handleMetadataResponse(final Response response) {
-        if (response.getStatus() != Response.Status.OK.getStatusCode()) {
-            throw new RestException(Response.Status.BAD_REQUEST,
-                    "Metadata could not be uploaded", ErrorCode.METADATA_ERROR);
-        }
-        return response.readEntity(new GenericType<>() {
-        });
     }
 }

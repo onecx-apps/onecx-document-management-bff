@@ -17,10 +17,6 @@ public class RestException extends RuntimeException {
     private final List<Object> parameters = new ArrayList<>();
     private final Map<String, Object> namedParameters = new HashMap<>();
 
-    public RestException(String message) {
-        super(message);
-    }
-
     public RestException(final Response.Status status, final String message, final ErrorCode errorCode) {
         super(message);
         this.status = status;
