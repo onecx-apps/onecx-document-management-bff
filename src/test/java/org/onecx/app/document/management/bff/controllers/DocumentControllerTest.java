@@ -7,39 +7,41 @@ import static org.mockserver.model.HttpResponse.response;
 import static org.mockserver.model.JsonBody.json;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
-import org.junit.jupiter.api.AfterEach;
+import jakarta.ws.rs.core.Response.Status;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockserver.client.MockServerClient;
+import org.onecx.app.document.management.bff.AbstractTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
-import java.util.List;
 
 import gen.org.tkit.onecx.document_management.client.model.Attachment;
 import gen.org.tkit.onecx.document_management.client.model.DocumentDetail;
 import gen.org.tkit.onecx.filestorage.client.model.FileMetadataResponse;
 import gen.org.tkit.onecx.filestorage.client.model.PresignedUrlResponse;
 import io.quarkiverse.mockserver.test.InjectMockServerClient;
-import io.quarkiverse.mockserver.test.MockServerTestResource;
-import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
-import jakarta.ws.rs.core.Response.Status;
 
 @QuarkusTest
-@QuarkusTestResource(MockServerTestResource.class)
 @TestHTTPEndpoint(DocumentController.class)
-public class DocumentControllerTest {
+public class DocumentControllerTest extends AbstractTest {
 
     private static final String DOCUMENT_ID = "test-document-id";
     private static final String ATTACHMENT_ID = "test-attachment-id";
     private static final String FILE_NAME = "test-file.pdf";
     private static final String PRESIGNED_URL = "https://mock-storage.example.com/download/test-file.pdf";
     private static final OffsetDateTime EXPIRATION = OffsetDateTime.parse("2026-12-31T23:59:59+01:00");
+    private static final String USERNAME_TOKEN = "apm-username";
+    private static final String SVC_MOCK_ID = "DOC_MGMT_SVC_MOCK";
+    private static final String SEC_SVC_MOCK_ID = "SEC_DOC_MGMT_SVC_MOCK";
+    private static final String FILE_STORAGE_MOCK_ID = "FILE_STORAGE_SVC_MOCK";
 
     private static final ObjectMapper MAPPER = new ObjectMapper()
             .registerModule(new JavaTimeModule());
@@ -47,9 +49,15 @@ public class DocumentControllerTest {
     @InjectMockServerClient
     MockServerClient mockServerClient;
 
-    @AfterEach
-    void resetMocks() {
-        mockServerClient.reset();
+    @BeforeEach
+    public void resetExpectation() {
+        try {
+            mockServerClient.clear(SVC_MOCK_ID);
+            mockServerClient.clear(FILE_STORAGE_MOCK_ID);
+            mockServerClient.clear(SEC_SVC_MOCK_ID);
+        } catch (Exception e) {
+            // mockid not existing
+        }
     }
 
     @Test
@@ -68,6 +76,7 @@ public class DocumentControllerTest {
                 .when(request()
                         .withMethod("GET")
                         .withPath("/v1/attachment/" + ATTACHMENT_ID))
+                .withId(SVC_MOCK_ID)
                 .respond(response()
                         .withStatusCode(Status.OK.getStatusCode())
                         .withContentType(org.mockserver.model.MediaType.APPLICATION_JSON)
@@ -77,14 +86,18 @@ public class DocumentControllerTest {
                 .when(request()
                         .withMethod("POST")
                         .withPath("/v1/file-storage/presigned/download"))
+                .withId(FILE_STORAGE_MOCK_ID)
                 .respond(response()
                         .withStatusCode(Status.OK.getStatusCode())
                         .withContentType(org.mockserver.model.MediaType.APPLICATION_JSON)
                         .withBody(json(MAPPER.writeValueAsString(presignedUrlResponse))));
 
         var responseBody = given()
-                .contentType(ContentType.JSON)
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(USERNAME_TOKEN, ADMIN)
+                .header(APM_HEADER_PARAM, createToken(ADMIN, "org1"))
+                .contentType(ContentType.JSON)
                 .get("/file/{attachmentId}", ATTACHMENT_ID)
                 .then()
                 .statusCode(Status.OK.getStatusCode())
@@ -103,12 +116,16 @@ public class DocumentControllerTest {
                 .when(request()
                         .withMethod("GET")
                         .withPath("/v1/attachment/" + ATTACHMENT_ID))
+                .withId(SVC_MOCK_ID)
                 .respond(response()
                         .withStatusCode(Status.NOT_FOUND.getStatusCode()));
 
         given()
-                .contentType(ContentType.JSON)
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(USERNAME_TOKEN, ADMIN)
+                .header(APM_HEADER_PARAM, createToken(ADMIN, "org1"))
+                .contentType(ContentType.JSON)
                 .get("/file/{attachmentId}", ATTACHMENT_ID)
                 .then()
                 .statusCode(Status.NOT_FOUND.getStatusCode());
@@ -121,12 +138,16 @@ public class DocumentControllerTest {
                 .when(request()
                         .withMethod("GET")
                         .withPath("/v1/attachment/" + ATTACHMENT_ID))
+                .withId(SVC_MOCK_ID)
                 .respond(response()
                         .withStatusCode(Status.INTERNAL_SERVER_ERROR.getStatusCode()));
 
         given()
-                .contentType(ContentType.JSON)
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(USERNAME_TOKEN, ADMIN)
+                .header(APM_HEADER_PARAM, createToken(ADMIN, "org1"))
+                .contentType(ContentType.JSON)
                 .get("/file/{attachmentId}", ATTACHMENT_ID)
                 .then()
                 .statusCode(Status.BAD_REQUEST.getStatusCode());
@@ -143,6 +164,7 @@ public class DocumentControllerTest {
                 .when(request()
                         .withMethod("GET")
                         .withPath("/v1/attachment/" + ATTACHMENT_ID))
+                .withId(SVC_MOCK_ID)
                 .respond(response()
                         .withStatusCode(Status.OK.getStatusCode())
                         .withContentType(org.mockserver.model.MediaType.APPLICATION_JSON)
@@ -152,12 +174,16 @@ public class DocumentControllerTest {
                 .when(request()
                         .withMethod("POST")
                         .withPath("/v1/file-storage/presigned/download"))
+                .withId(FILE_STORAGE_MOCK_ID)
                 .respond(response()
                         .withStatusCode(Status.BAD_REQUEST.getStatusCode()));
 
         given()
-                .contentType(ContentType.JSON)
                 .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(USERNAME_TOKEN, ADMIN)
+                .header(APM_HEADER_PARAM, createToken(ADMIN, "org1"))
+                .contentType(ContentType.JSON)
                 .get("/file/{attachmentId}", ATTACHMENT_ID)
                 .then()
                 .statusCode(Status.BAD_REQUEST.getStatusCode());
@@ -184,6 +210,7 @@ public class DocumentControllerTest {
                 .when(request()
                         .withMethod("GET")
                         .withPath("/v1/document/" + DOCUMENT_ID))
+                .withId(SVC_MOCK_ID)
                 .respond(response()
                         .withStatusCode(Status.OK.getStatusCode())
                         .withContentType(org.mockserver.model.MediaType.APPLICATION_JSON)
@@ -193,6 +220,7 @@ public class DocumentControllerTest {
                 .when(request()
                         .withMethod("POST")
                         .withPath("/v1/file-storage/presigned/upload"))
+                .withId(FILE_STORAGE_MOCK_ID)
                 .respond(response()
                         .withStatusCode(Status.OK.getStatusCode())
                         .withContentType(org.mockserver.model.MediaType.APPLICATION_JSON)
@@ -203,9 +231,12 @@ public class DocumentControllerTest {
         uploadRequest.setFileName(FILE_NAME);
 
         var response = given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(USERNAME_TOKEN, ADMIN)
+                .header(APM_HEADER_PARAM, createToken(ADMIN, "org1"))
                 .contentType(ContentType.JSON)
                 .body(MAPPER.writeValueAsString(List.of(uploadRequest)))
-                .when()
                 .post("/files/upload/{documentId}", DOCUMENT_ID)
                 .then()
                 .statusCode(Status.OK.getStatusCode())
@@ -233,6 +264,7 @@ public class DocumentControllerTest {
                 .when(request()
                         .withMethod("GET")
                         .withPath("/v1/document/" + DOCUMENT_ID))
+                .withId(SVC_MOCK_ID)
                 .respond(response()
                         .withStatusCode(Status.OK.getStatusCode())
                         .withContentType(org.mockserver.model.MediaType.APPLICATION_JSON)
@@ -243,9 +275,12 @@ public class DocumentControllerTest {
         uploadRequest.setFileName(FILE_NAME);
 
         var response = given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(USERNAME_TOKEN, ADMIN)
+                .header(APM_HEADER_PARAM, createToken(ADMIN, "org1"))
                 .contentType(ContentType.JSON)
                 .body(MAPPER.writeValueAsString(List.of(uploadRequest)))
-                .when()
                 .post("/files/upload/{documentId}", DOCUMENT_ID)
                 .then()
                 .statusCode(Status.OK.getStatusCode())
@@ -273,6 +308,7 @@ public class DocumentControllerTest {
                 .when(request()
                         .withMethod("GET")
                         .withPath("/v1/document/" + DOCUMENT_ID))
+                .withId(SVC_MOCK_ID)
                 .respond(response()
                         .withStatusCode(Status.OK.getStatusCode())
                         .withContentType(org.mockserver.model.MediaType.APPLICATION_JSON)
@@ -283,9 +319,12 @@ public class DocumentControllerTest {
         uploadRequest.setFileName(FILE_NAME);
 
         var response = given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(USERNAME_TOKEN, ADMIN)
+                .header(APM_HEADER_PARAM, createToken(ADMIN, "org1"))
                 .contentType(ContentType.JSON)
                 .body(MAPPER.writeValueAsString(List.of(uploadRequest)))
-                .when()
                 .post("/files/upload/{documentId}", DOCUMENT_ID)
                 .then()
                 .statusCode(Status.OK.getStatusCode())
@@ -311,6 +350,7 @@ public class DocumentControllerTest {
                 .when(request()
                         .withMethod("GET")
                         .withPath("/v1/document/" + DOCUMENT_ID))
+                .withId(SVC_MOCK_ID)
                 .respond(response()
                         .withStatusCode(Status.OK.getStatusCode())
                         .withContentType(org.mockserver.model.MediaType.APPLICATION_JSON)
@@ -320,6 +360,7 @@ public class DocumentControllerTest {
                 .when(request()
                         .withMethod("POST")
                         .withPath("/v1/file-storage/presigned/upload"))
+                .withId(FILE_STORAGE_MOCK_ID)
                 .respond(response()
                         .withStatusCode(Status.INTERNAL_SERVER_ERROR.getStatusCode()));
 
@@ -328,9 +369,12 @@ public class DocumentControllerTest {
         uploadRequest.setFileName(FILE_NAME);
 
         var response = given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(USERNAME_TOKEN, ADMIN)
+                .header(APM_HEADER_PARAM, createToken(ADMIN, "org1"))
                 .contentType(ContentType.JSON)
                 .body(MAPPER.writeValueAsString(List.of(uploadRequest)))
-                .when()
                 .post("/files/upload/{documentId}", DOCUMENT_ID)
                 .then()
                 .statusCode(Status.OK.getStatusCode())
@@ -364,6 +408,7 @@ public class DocumentControllerTest {
                 .when(request()
                         .withMethod("GET")
                         .withPath("/v1/document/" + DOCUMENT_ID))
+                .withId(SVC_MOCK_ID)
                 .respond(response()
                         .withStatusCode(Status.OK.getStatusCode())
                         .withContentType(org.mockserver.model.MediaType.APPLICATION_JSON)
@@ -373,6 +418,7 @@ public class DocumentControllerTest {
                 .when(request()
                         .withMethod("POST")
                         .withPath("/v1/file-storage/file/metadata"))
+                .withId(FILE_STORAGE_MOCK_ID)
                 .respond(response()
                         .withStatusCode(Status.OK.getStatusCode())
                         .withContentType(org.mockserver.model.MediaType.APPLICATION_JSON)
@@ -382,6 +428,7 @@ public class DocumentControllerTest {
                 .when(request()
                         .withMethod("PATCH")
                         .withPath("/v1/attachment/metadata"))
+                .withId(SEC_SVC_MOCK_ID)
                 .respond(response()
                         .withStatusCode(Status.OK.getStatusCode()));
 
@@ -389,9 +436,12 @@ public class DocumentControllerTest {
         metadataRequest.setAttachmentId(ATTACHMENT_ID);
 
         given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(USERNAME_TOKEN, ADMIN)
+                .header(APM_HEADER_PARAM, createToken(ADMIN, "org1"))
                 .contentType(ContentType.JSON)
                 .body(MAPPER.writeValueAsString(List.of(metadataRequest)))
-                .when()
                 .patch("/{documentId}/files/metadata", DOCUMENT_ID)
                 .then()
                 .statusCode(Status.OK.getStatusCode());
@@ -412,6 +462,7 @@ public class DocumentControllerTest {
                 .when(request()
                         .withMethod("GET")
                         .withPath("/v1/document/" + DOCUMENT_ID))
+                .withId(SVC_MOCK_ID)
                 .respond(response()
                         .withStatusCode(Status.OK.getStatusCode())
                         .withContentType(org.mockserver.model.MediaType.APPLICATION_JSON)
@@ -421,6 +472,7 @@ public class DocumentControllerTest {
                 .when(request()
                         .withMethod("POST")
                         .withPath("/v1/file-storage/file/metadata"))
+                .withId(FILE_STORAGE_MOCK_ID)
                 .respond(response()
                         .withStatusCode(Status.INTERNAL_SERVER_ERROR.getStatusCode()));
 
@@ -428,9 +480,12 @@ public class DocumentControllerTest {
         metadataRequest.setAttachmentId(ATTACHMENT_ID);
 
         given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(USERNAME_TOKEN, ADMIN)
+                .header(APM_HEADER_PARAM, createToken(ADMIN, "org1"))
                 .contentType(ContentType.JSON)
                 .body(MAPPER.writeValueAsString(List.of(metadataRequest)))
-                .when()
                 .patch("/{documentId}/files/metadata", DOCUMENT_ID)
                 .then()
                 .statusCode(Status.BAD_REQUEST.getStatusCode());
@@ -448,13 +503,17 @@ public class DocumentControllerTest {
                 .when(request()
                         .withMethod("POST")
                         .withPath("/v1/attachment/storage-audit"))
+                .withId(SVC_MOCK_ID)
                 .respond(response()
                         .withStatusCode(Status.OK.getStatusCode()));
 
         given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(USERNAME_TOKEN, ADMIN)
+                .header(APM_HEADER_PARAM, createToken(ADMIN, "org1"))
                 .contentType(ContentType.JSON)
                 .body(MAPPER.writeValueAsString(List.of(auditRequest)))
-                .when()
                 .patch("/{documentId}/files/audit-log", DOCUMENT_ID)
                 .then()
                 .statusCode(Status.OK.getStatusCode());
@@ -470,13 +529,17 @@ public class DocumentControllerTest {
                 .when(request()
                         .withMethod("POST")
                         .withPath("/v1/attachment/storage-audit"))
+                .withId(SVC_MOCK_ID)
                 .respond(response()
                         .withStatusCode(Status.INTERNAL_SERVER_ERROR.getStatusCode()));
 
         given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(USERNAME_TOKEN, ADMIN)
+                .header(APM_HEADER_PARAM, createToken(ADMIN, "org1"))
                 .contentType(ContentType.JSON)
                 .body(MAPPER.writeValueAsString(List.of(auditRequest)))
-                .when()
                 .patch("/{documentId}/files/audit-log", DOCUMENT_ID)
                 .then()
                 .statusCode(Status.INTERNAL_SERVER_ERROR.getStatusCode());
