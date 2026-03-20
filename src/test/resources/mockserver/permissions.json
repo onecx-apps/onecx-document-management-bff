@@ -1,0 +1,29 @@
+[
+    {
+        "id" : "1",
+        "httpRequest" : {
+            "headers" : {
+                "apm-username": [
+                    "alice"
+                ]
+            },
+            "path" : "/v1/permissions/user/applications/onecx-document-management-bff"
+        },
+        "httpResponse" : {
+            "body" : {
+                "type" : "JSON",
+                "json" : {
+                    "appId" : "onecx-document-management-bff",
+                    "permissions" : {
+                        "document": [
+                            "read",
+                            "write",
+                            "delete"
+                        ]
+                    }
+                },
+                "contentType" : "application/json"
+            }
+        }
+    }
+]

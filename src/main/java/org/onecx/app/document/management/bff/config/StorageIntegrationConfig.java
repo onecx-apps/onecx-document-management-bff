@@ -11,7 +11,7 @@ import io.smallrye.config.WithDefault;
  */
 @ConfigRoot(phase = ConfigPhase.RUN_TIME)
 @ConfigMapping(prefix = "onecx.document.file-storage")
-@ConfigDocFilename("onecx-document-management-bff.adoc")
+@ConfigDocFilename("onecx-document-management-bff-docs.adoc")
 public interface StorageIntegrationConfig {
 
     /**

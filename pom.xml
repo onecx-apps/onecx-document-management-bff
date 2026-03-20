@@ -126,6 +126,11 @@
             <artifactId>quarkus-junit5</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-test-keycloak-server</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -215,8 +220,7 @@
                             <goal>wget</goal>
                         </goals>
                         <configuration>
-                            <!--                            TODO restore when changes are merged-->
-                            <uri>https://raw.githubusercontent.com/dawpyl/onecx-file-storage-svc/refs/heads/feat/file-metadata/src/main/openapi/onecx-file-storage-v1.yaml</uri>
+                            <uri>https://raw.githubusercontent.com/onecx/onecx-file-storage-svc/refs/heads/main/src/main/openapi/onecx-file-storage-v1.yaml</uri>
                             <outputDirectory>target/tmp/openapi</outputDirectory>
                             <outputFileName>onecx-file-storage-svc.yaml</outputFileName>
                             <skipCache>true</skipCache>
