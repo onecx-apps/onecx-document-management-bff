@@ -189,6 +189,140 @@ public class DocumentControllerTest extends AbstractTest {
                 .statusCode(Status.BAD_REQUEST.getStatusCode());
     }
 
+    // ==================== deleteDocumentById ====================
+
+    @Test
+    @DisplayName("DELETE /{id} - should return 204 when document with attachments is successfully deleted and files are removed from storage")
+    void deleteDocumentById_shouldReturnNoContent_whenDocumentAndFilesDeletedSuccessfully() throws Exception {
+        var attachment = new Attachment();
+        attachment.setId(ATTACHMENT_ID);
+        attachment.setFileName(FILE_NAME);
+
+        var documentDetail = new DocumentDetail();
+        documentDetail.setId(DOCUMENT_ID);
+        documentDetail.setAttachments(List.of(attachment));
+
+        mockServerClient
+                .when(request()
+                        .withMethod("GET")
+                        .withPath("/v1/document/" + DOCUMENT_ID))
+                .withId(SVC_MOCK_ID)
+                .respond(response()
+                        .withStatusCode(Status.OK.getStatusCode())
+                        .withContentType(org.mockserver.model.MediaType.APPLICATION_JSON)
+                        .withBody(json(MAPPER.writeValueAsString(documentDetail))));
+
+        mockServerClient
+                .when(request()
+                        .withMethod("DELETE")
+                        .withPath("/v1/document/" + DOCUMENT_ID))
+                .withId(SEC_SVC_MOCK_ID)
+                .respond(response()
+                        .withStatusCode(Status.NO_CONTENT.getStatusCode()));
+
+        mockServerClient
+                .when(request()
+                        .withMethod("POST")
+                        .withPath("/v1/file-storage/file/delete"))
+                .withId(FILE_STORAGE_MOCK_ID)
+                .respond(response()
+                        .withStatusCode(Status.OK.getStatusCode()));
+
+        given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(USERNAME_TOKEN, ADMIN)
+                .header(APM_HEADER_PARAM, createToken(ADMIN, "org1"))
+                .contentType(ContentType.JSON)
+                .delete("/{id}", DOCUMENT_ID)
+                .then()
+                .statusCode(Status.NO_CONTENT.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("DELETE /{id} - should return 204 when document has no attachments")
+    void deleteDocumentById_shouldReturnNoContent_whenDocumentHasNoAttachments() throws Exception {
+        var documentDetail = new DocumentDetail();
+        documentDetail.setId(DOCUMENT_ID);
+        documentDetail.setAttachments(List.of());
+
+        mockServerClient
+                .when(request()
+                        .withMethod("GET")
+                        .withPath("/v1/document/" + DOCUMENT_ID))
+                .withId(SVC_MOCK_ID)
+                .respond(response()
+                        .withStatusCode(Status.OK.getStatusCode())
+                        .withContentType(org.mockserver.model.MediaType.APPLICATION_JSON)
+                        .withBody(json(MAPPER.writeValueAsString(documentDetail))));
+
+        mockServerClient
+                .when(request()
+                        .withMethod("DELETE")
+                        .withPath("/v1/document/" + DOCUMENT_ID))
+                .withId(SEC_SVC_MOCK_ID)
+                .respond(response()
+                        .withStatusCode(Status.NO_CONTENT.getStatusCode()));
+
+        given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(USERNAME_TOKEN, ADMIN)
+                .header(APM_HEADER_PARAM, createToken(ADMIN, "org1"))
+                .contentType(ContentType.JSON)
+                .delete("/{id}", DOCUMENT_ID)
+                .then()
+                .statusCode(Status.NO_CONTENT.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("DELETE /{id} - should return 400 when file storage fails to delete attachment file")
+    void deleteDocumentById_shouldReturnBadRequest_whenFileStorageDeleteFails() throws Exception {
+        var attachment = new Attachment();
+        attachment.setId(ATTACHMENT_ID);
+        attachment.setFileName(FILE_NAME);
+
+        var documentDetail = new DocumentDetail();
+        documentDetail.setId(DOCUMENT_ID);
+        documentDetail.setAttachments(List.of(attachment));
+
+        mockServerClient
+                .when(request()
+                        .withMethod("GET")
+                        .withPath("/v1/document/" + DOCUMENT_ID))
+                .withId(SVC_MOCK_ID)
+                .respond(response()
+                        .withStatusCode(Status.OK.getStatusCode())
+                        .withContentType(org.mockserver.model.MediaType.APPLICATION_JSON)
+                        .withBody(json(MAPPER.writeValueAsString(documentDetail))));
+
+        mockServerClient
+                .when(request()
+                        .withMethod("DELETE")
+                        .withPath("/v1/document/" + DOCUMENT_ID))
+                .withId(SEC_SVC_MOCK_ID)
+                .respond(response()
+                        .withStatusCode(Status.NO_CONTENT.getStatusCode()));
+
+        mockServerClient
+                .when(request()
+                        .withMethod("POST")
+                        .withPath("/v1/file-storage/file/delete"))
+                .withId(FILE_STORAGE_MOCK_ID)
+                .respond(response()
+                        .withStatusCode(Status.INTERNAL_SERVER_ERROR.getStatusCode()));
+
+        given()
+                .when()
+                .auth().oauth2(keycloakClient.getAccessToken(ADMIN))
+                .header(USERNAME_TOKEN, ADMIN)
+                .header(APM_HEADER_PARAM, createToken(ADMIN, "org1"))
+                .contentType(ContentType.JSON)
+                .delete("/{id}", DOCUMENT_ID)
+                .then()
+                .statusCode(Status.BAD_REQUEST.getStatusCode());
+    }
+
     // ==================== uploadAllFiles ====================
 
     @Test

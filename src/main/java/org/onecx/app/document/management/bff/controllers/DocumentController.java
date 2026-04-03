@@ -63,7 +63,10 @@ public class DocumentController implements DocumentControllerV1ApiService {
 
     @Override
     public Response deleteDocumentById(String id) {
+        var docDetail = documentControllerV1Api.getDocumentById(id).readEntity(DocumentDetail.class);
+        var attachments = docDetail.getAttachments();
         try (Response response = documentControllerV1Api.deleteDocumentById(id)) {
+            fileService.deleteDocumentAttachmentFiles(attachments);
             return Response.status(response.getStatus()).build();
         }
     }

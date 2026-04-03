@@ -26,10 +26,7 @@ import gen.org.tkit.onecx.document_management.client.model.DocumentDetail;
 import gen.org.tkit.onecx.document_management.rs.internal.model.UpdateFileMetadataRequestDTO;
 import gen.org.tkit.onecx.document_management.rs.internal.model.UploadAttachmentPresignedUrlRequestDTO;
 import gen.org.tkit.onecx.filestorage.client.api.FileStorageApi;
-import gen.org.tkit.onecx.filestorage.client.model.FileMetadataRequest;
-import gen.org.tkit.onecx.filestorage.client.model.FileMetadataResponse;
-import gen.org.tkit.onecx.filestorage.client.model.PresignedUrlRequest;
-import gen.org.tkit.onecx.filestorage.client.model.PresignedUrlResponse;
+import gen.org.tkit.onecx.filestorage.client.model.*;
 
 @ApplicationScoped
 public class AttachmentService {
@@ -99,6 +96,18 @@ public class AttachmentService {
             throw new RestException(Response.Status.fromStatusCode(response.getStatus()), "Error on creating audit logs",
                     ErrorCode.METADATA_ERROR);
         }
+    }
+
+    public void deleteDocumentAttachmentFiles(final List<Attachment> attachments) {
+        var deleteRequests = attachments.stream().map(this::getFileDeleteRequest).toList();
+        deleteRequests.forEach(request -> {
+            try {
+                fileStorageApi.deleteFile(request);
+            } catch (Exception e) {
+                var message = String.format("Attachment %s file could not be deleted", request.getFileName());
+                throw new RestException(Response.Status.BAD_REQUEST, message, ErrorCode.FILE_DELETE_ERROR);
+            }
+        });
     }
 
     private UploadUrlResult processAttachment(final DocumentDetail documentDetail, final Attachment attachment,
@@ -232,5 +241,14 @@ public class AttachmentService {
             final var attId = fileNameIdMap.get(receivedFileName);
             return new MetadataResult(attId, result);
         }).toList();
+    }
+
+    private FileDeleteRequest getFileDeleteRequest(final Attachment attachment) {
+        var finalFileName = getUploadFileName(attachment.getId(), attachment.getFileName());
+        var deleteRequest = new FileDeleteRequest();
+        deleteRequest.setFileName(finalFileName);
+        deleteRequest.setApplicationId(storageConfig.applicationId());
+        deleteRequest.setProductName(storageConfig.productName());
+        return deleteRequest;
     }
 }
