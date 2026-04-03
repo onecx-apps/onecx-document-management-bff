@@ -206,8 +206,7 @@
                             <goal>wget</goal>
                         </goals>
                         <configuration>
-<!--                            TODO restore when changes are merged-->
-                            <uri>https://raw.githubusercontent.com/dawpyl/onecx-document-management-svc/refs/heads/feat/file-storage-integration/src/main/openapi/document-management-svc.yaml</uri>
+                            <uri>https://raw.githubusercontent.com/onecx-apps/onecx-document-management-svc/refs/heads/main/src/main/openapi/document-management-svc.yaml</uri>
                             <outputDirectory>target/tmp/openapi</outputDirectory>
                             <outputFileName>onecx-document-management-svc.yaml</outputFileName>
                             <skipCache>true</skipCache>
