@@ -8,7 +8,6 @@ tags:
   - name: DocumentControllerV1
   - name: DocumentSpecificationControllerV1
   - name: DocumentTypeControllerV1
-  - name: FileControllerV1
   - name: SupportedMimeTypeControllerV1
 
 paths:
@@ -439,28 +438,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RFCProblem'
-  /document/file/delete-bulk-attachment:
-    delete:
-      x-onecx:
-        permissions:
-          document:
-            - delete
-      tags:
-        - DocumentControllerV1
-      description: Delete attachment's files in bulk
-      operationId: deleteFilesInBulk
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                type: string
-      responses:
-        "204":
-          description: No Content
-        "404":
-          description: Not found
   /document/file/{attachmentId}:
     get:
       x-onecx:
@@ -496,38 +473,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-  /document/file/{documentId}/attachments:
-    get:
-      x-onecx:
-        permissions:
-          document:
-            - read
-      tags:
-        - DocumentControllerV1
-      description: Get all the attachments of the document packaged in a zip file
-      operationId: getAllDocumentAttachmentsAsZip
-      parameters:
-        - name: documentId
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: client-timezone
-          in: header
-          schema:
-            type: string
-      responses:
-        "200":
-          description: OK
-          content:
-            application/octet-stream:
-              schema:
-                format: binary
-                type: string
-        "400":
-          description: Bad request
-        "204":
-          description: No content
   /document/{documentId}/files/metadata:
     patch:
       x-onecx:
@@ -727,119 +672,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RFCProblem'
-  /files/bucket/{name}:
-    post:
-      x-onecx:
-        permissions:
-          document:
-            - write
-      tags:
-        - FileControllerV1
-      summary: Creates a bucket with the given name
-      description: Create a bucket
-      operationId: createBucket
-      parameters:
-        - name: name
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        "201":
-          description: Created
-        "400":
-          description: Bad request
-  /files/{bucket}/{path}:
-    get:
-      x-onecx:
-        permissions:
-          document:
-            - read
-      tags:
-        - FileControllerV1
-      summary: Download file contents
-      operationId: downloadFile
-      parameters:
-        - name: bucket
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: path
-          in: path
-          required: true
-          schema:
-            pattern: '.+'
-            type: string
-      responses:
-        "200":
-          description: OK
-          content:
-            application/octet-stream:
-              schema:
-                format: binary
-                type: string
-        "404":
-          description: Not found
-    put:
-      x-onecx:
-        permissions:
-          document:
-            - write
-      tags:
-        - FileControllerV1
-      summary: Uploads a file to the given location
-      description: Uploads the file
-      operationId: uploadFile
-      parameters:
-        - name: bucket
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: path
-          in: path
-          required: true
-          schema:
-            pattern: .+
-            type: string
-      requestBody:
-        content:
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/FileMultipartBody'
-      responses:
-        "201":
-          description: Created
-        "400":
-          description: Bad request
-    delete:
-      x-onecx:
-        permissions:
-          document:
-            - delete
-      tags:
-        - FileControllerV1
-      summary: Deletes the file from Minio object storage
-      description: Deletes the file
-      operationId: deleteFile
-      parameters:
-        - name: bucket
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: path
-          in: path
-          required: true
-          schema:
-            pattern: .+
-            type: string
-      responses:
-        "201":
-          description: File Deleted
-        "404":
-          description: Not Found
   /supported-mime-type:
     get:
       x-onecx:

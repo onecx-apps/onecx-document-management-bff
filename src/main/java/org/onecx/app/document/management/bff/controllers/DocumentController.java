@@ -1,6 +1,5 @@
 package org.onecx.app.document.management.bff.controllers;
 
-import java.io.File;
 import java.util.List;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -72,27 +71,11 @@ public class DocumentController implements DocumentControllerV1ApiService {
     }
 
     @Override
-    public Response deleteFilesInBulk(List<String> requestBody) {
-        try (Response response = documentControllerV1Api.deleteFilesInBulk(requestBody)) {
-            return Response.status(response.getStatus()).build();
-        }
-    }
-
-    @Override
     public Response getAllChannels() {
         try (Response response = documentControllerV1Api.getAllChannels()) {
             return Response.status(response.getStatus())
                     .entity(mapper.mapChannel(response.readEntity(new GenericType<List<ChannelDTO>>() {
                     })))
-                    .build();
-        }
-    }
-
-    @Override
-    public Response getAllDocumentAttachmentsAsZip(String documentId, String clientTimezone) {
-        try (Response response = documentControllerV1Api.getAllDocumentAttachmentsAsZip(documentId, clientTimezone)) {
-            return Response.status(response.getStatus())
-                    .entity(response.readEntity(File.class))
                     .build();
         }
     }

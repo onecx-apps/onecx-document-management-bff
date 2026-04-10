@@ -47,8 +47,6 @@ public interface DocumentMapper {
 
     List<StorageUploadAudit> mapAuditList(List<StorageUploadAuditDTO> storageUploadAuditDTOS);
 
-    DocumentResponse map(DocumentResponseDTO documentResponseDTO);
-
     DocumentSpecification map(DocumentSpecificationDTO documentSpecificationDTO);
 
     List<DocumentSpecification> mapSpecification(List<DocumentSpecificationDTO> documentSpecificationDTOS);
