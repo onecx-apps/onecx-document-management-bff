@@ -17,5 +17,5 @@ app:
         enabled: true
         spec:
           kcConfig:
-            defaultClientScopes: [ ocx-doc:all, ocx-doc:read, ocx-doc:write, ocx-pm:read ]
+            defaultClientScopes: [ ocx-doc:all, ocx-doc:read, ocx-doc:write, ocx-pm:read, ocx-fs:write, ocx-fs:read, ocx-fs:delete ]
   product: false
